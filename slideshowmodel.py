@@ -27,7 +27,7 @@ class SlideshowModel(object):
     def __init__(self):
         self.slides = []
         self.searchParams = {}
-        self.currentIndex = 0
+        self._currentIndex = 0
 
     def SearchParam(self, key, value):
         """
@@ -45,8 +45,13 @@ class SlideshowModel(object):
         newSlides = self.factory.Build(self.searchParams)
         
         self.slides.extend(newSlides)
+
+    def Fetch(self):
+        if self._currentIndex >= len(self.slides): return None
         
-        return self.slides
+        slide = self.slides[self._currentIndex]
+        self._currentIndex += 1
+        return slide
     
 
 class SlideFactory(object):
@@ -80,8 +85,16 @@ class FlickrSlideFactory(SlideFactory):
         self.__ProcessEmailPages(user)
         
     def __ProcessEmailPages(self, user):
-        for photo in flickr.favorites_getPublicList(user.id, 50, 0):
-            self.photos.append(FlickrSlide(photo))
+        PER_PAGE = 500
+        page = 0
+
+        while True:
+            photos = flickr.favorites_getPublicList(user.id, PER_PAGE, page)
+            slides = [FlickrSlide(slide) for slide in photos]
+            self.photos.extend(slides)
+            if len(photos) < PER_PAGE: break
+            if len(self.photos) > PER_PAGE * 2: break
+
 
     
 class Slide(object):
@@ -108,12 +121,21 @@ class FlickrSlide(Slide):
         """
         Returns the URL of the image.
         """
-        return self.photo.GetURL()
+        return self.photo.getURL()
 
     
 if __name__ == "__main__":
     model = SlideshowModel()
     model.SearchParam("email", "m2@innerlogic.org")
-    for slide in model.Find(): print slide.GetTitle()
+    model.Find()
+    
+    count = 0
+    while True:
+        slide = model.Fetch()
+        if slide is None: break
+        
+        print count, ": ", slide.GetTitle()
+        count += 1
+    print "done printing"
 
     
