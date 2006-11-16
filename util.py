@@ -17,3 +17,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+DEBUG_LEVEL = 1
+
+def debugLog(msg, level):
+    if level >= DEBUG_LEVEL: print "debug: " + msg
+
+if __name__ == "__main__":
+    debugLog("testing debug", 10)
+    
