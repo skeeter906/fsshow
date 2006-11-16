@@ -17,7 +17,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import flickr
+import flickr, util
 
 class SlideshowModel(object):
     """
@@ -26,7 +26,7 @@ class SlideshowModel(object):
     """
     def __init__(self):
         self.slides = []
-        self.searchParams = {}
+        self._searchParams = {}
         self._currentIndex = 0
 
     def SearchParam(self, key, value):
@@ -34,7 +34,7 @@ class SlideshowModel(object):
         Define a tuple key/value pair which acts as a search paramater. Call
         of this method adds a parameter with a logical AND.
         """
-        self.searchParams[key] = value
+        self._searchParams[key] = value
         
     def Find(self):
         """
@@ -42,7 +42,7 @@ class SlideshowModel(object):
         """
         self.factory = FlickrSlideFactory()
         
-        newSlides = self.factory.Build(self.searchParams)
+        newSlides = self.factory.Build(self._searchParams)
         
         self.slides.extend(newSlides)
 
@@ -62,7 +62,7 @@ class SlideFactory(object):
         self.photos = []
     
     def Build(self, searchParams):
-        self.searchParams = searchParams
+        self._searchParams = searchParams
         self.BuildProcess()
         
         return self.photos
@@ -76,7 +76,7 @@ class FlickrSlideFactory(SlideFactory):
     
     def BuildProcess(self):
         me = flickr.people_findByEmail("m2@innerlogic.org")
-        if "email" in self.searchParams: self.__ProcessEmail()
+        if "email" in self._searchParams: self.__ProcessEmail()
 
 
     def __ProcessEmail(self):
@@ -85,7 +85,7 @@ class FlickrSlideFactory(SlideFactory):
         self.__ProcessEmailPages(user)
         
     def __ProcessEmailPages(self, user):
-        PER_PAGE = 500
+        PER_PAGE = 5
         page = 0
 
         while True:
@@ -102,7 +102,8 @@ class Slide(object):
     A single photo in the slideshow.
     """
     def __init__(self, photo):
-        self.photo = photo
+        self._photo = photo
+        self._url = None
         
     def GetTitle(self): pass
     def GetUrl(self): pass
@@ -115,14 +116,25 @@ class FlickrSlide(Slide):
         """
         Returns the title of the slide.
         """
-        u = unicode(self.photo.title)
+        u = unicode(self._photo.title)
         return u.encode("utf8", "replace")
     def GetUrl(self):
         """
         Returns the URL of the image.
         """
-        return self.photo.getURL()
-
+        try:
+            url = self._photo.getURL(size='Original', urlType='source')
+        except flickr.FlickrError:
+            util.debugLog("Original size not found")
+            try:
+                url = self._photo.getURL(size='Large', urlType='source')
+            except flickr.FlickrError:
+                util.debugLog("Large size not found")
+                url = self._photo.getURL(size='Medium', urlType='source')
+            
+        return url
+    
+    
     
 if __name__ == "__main__":
     model = SlideshowModel()
@@ -134,7 +146,8 @@ if __name__ == "__main__":
         slide = model.Fetch()
         if slide is None: break
         
-        print count, ": ", slide.GetTitle()
+        print slide.GetUrl()
+        
         count += 1
     print "done printing"
 
