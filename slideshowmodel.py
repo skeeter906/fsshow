@@ -17,7 +17,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import flickr, util, urllib
+import flickr, util, urllib, os
 
 class SlideshowModel(object):
     """
@@ -144,8 +144,14 @@ class FlickrSlide(Slide):
         # get the URL if it's not already saved
         if not hasattr(self, "_url"): self.GetUrl()
         
-        # download
         data = urllib.urlopen(self._url).read()
+        
+        try:
+            fd = open(outPath, "wb")
+            fd.write(data)
+        finally:
+            util.debugLog("IOError, closing fd")
+            fd.close()
         
         return True
     
