@@ -25,9 +25,14 @@ class SlideshowModel(object):
     images are acquired through this interface.
     """
     def __init__(self):
+        # Thread-insentive members
         self._slides = []
         self._searchParams = {}
         self._currentIndex = 0
+        
+        # Thread-sensitive members
+        self._imagePaths = []
+        self._lock = threading.Lock()
 
     def SearchParam(self, key, value):
         """
@@ -54,17 +59,38 @@ class SlideshowModel(object):
         return slide
     
     def FetchImage(self, slide, outPath):
-        #slide = self.FetchSlide()
-        #
-        #if not slide: raise Exception("No more slides")
-        
+        """
+        Retrieves an image from Flickr and stores it in the model.
+        """
         slide.GetImage(outPath)
         
         path = slide.GetLocalPath()
         
-        print "path = ", path
+        self._lock.acquire()
+        self._imagePaths.append(path)
+        self._lock.release()
     
-    def Go(self):
+    def NextImagePath(self):
+        """
+        Get the path of next slide in the show.
+        """
+        self._lock.acquire()
+        
+        if self._currentIndex >= len(self._slides):
+            raise SlideshowModelException("End of slideshow")
+        
+        path = self._imagePaths[self._currentIndex]
+        self._currentIndex += 1
+        
+        self._lock.release()
+        
+        return path
+
+    def Start(self):
+        """
+        Kicks off the fetching of slide images. Continues to run until worker
+        threads have finished.
+        """
         THREAD_LIMIT = 5
         
         for k,slide in enumerate(self._slides):
@@ -79,13 +105,10 @@ class SlideshowModel(object):
             id = t.getName()
             util.debugLog("threadid: " + str(id))
             t.start()
-
-
-            #path = self.FetchImage()
             
-            #if not path: break
-            
-            #print "path = ", path
+        while threading.activeCount() > 1: time.sleep(1)
+        
+        util.debugLog("All threads have completed")
         
         return True
 
@@ -120,7 +143,7 @@ class FlickrSlideFactory(SlideFactory):
         self.__ProcessEmailPages(user)
         
     def __ProcessEmailPages(self, user):
-        PER_PAGE = 50
+        PER_PAGE = 3
         page = 0
 
         while True:
@@ -197,7 +220,8 @@ class FlickrSlide(Slide):
     
     def GetLocalPath(self):
         return self._localPath
-    
+
+class SlideshowModelException(Exception): pass
     
 if __name__ == "__main__":
     model = SlideshowModel()
@@ -211,7 +235,7 @@ if __name__ == "__main__":
     #    print "fetched path: ", path
     #    
     #    count += 1
-    model.Go()
+    model.Start()
     print "done printing"
 
     
