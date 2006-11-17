@@ -17,7 +17,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import flickr, util
+import flickr, util, urllib
 
 class SlideshowModel(object):
     """
@@ -103,7 +103,6 @@ class Slide(object):
     """
     def __init__(self, photo):
         self._photo = photo
-        self._url = None
         
     def GetTitle(self): pass
     def GetUrl(self): pass
@@ -118,9 +117,10 @@ class FlickrSlide(Slide):
         """
         u = unicode(self._photo.title)
         return u.encode("utf8", "replace")
+    
     def GetUrl(self):
         """
-        Returns the URL of the image.
+        Returns the URL (string) of the image.
         """
         try:
             url = self._photo.getURL(size='Original', urlType='source')
@@ -131,9 +131,23 @@ class FlickrSlide(Slide):
             except flickr.FlickrError:
                 util.debugLog("Large size not found")
                 url = self._photo.getURL(size='Medium', urlType='source')
-            
+        
+        self._url = url
         return url
     
+    def GetImage(self, outPath):
+        """
+        Downloads the image file to the specified path.
+        
+        Returns True on success.
+        """
+        # get the URL if it's not already saved
+        if not hasattr(self, "_url"): self.GetUrl()
+        
+        # download
+        data = urllib.urlopen(self._url).read()
+        
+        return True
     
     
 if __name__ == "__main__":
@@ -146,7 +160,8 @@ if __name__ == "__main__":
         slide = model.Fetch()
         if slide is None: break
         
-        print slide.GetUrl()
+        #print slide.GetUrl()
+        slide.GetImage(None)
         
         count += 1
     print "done printing"
