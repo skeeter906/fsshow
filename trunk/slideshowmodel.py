@@ -17,7 +17,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import flickr, util, urllib, os
+import flickr, util, urllib, os, time, threading
 
 class SlideshowModel(object):
     """
@@ -46,13 +46,45 @@ class SlideshowModel(object):
         
         self.slides.extend(newSlides)
 
-    def Fetch(self):
+    def FetchSlide(self):
         if self._currentIndex >= len(self.slides): return None
         
         slide = self.slides[self._currentIndex]
         self._currentIndex += 1
         return slide
     
+    def FetchImage(self):
+        slide = self.FetchSlide()
+        
+        if not slide: raise Exception("No more slides")
+        
+        slide.GetImage(str(self._currentIndex) + ".jpg")
+        
+        path = slide.GetLocalPath()
+        
+        print "path = ", path
+    
+    def Go(self):
+        THREAD_LIMIT = 5
+        while True:
+            # limit number of threads
+            while threading.activeCount() > THREAD_LIMIT:
+                time.sleep(1)
+            
+            util.debugLog("creating new thread")
+            t = threading.Thread(target=self.FetchImage)
+            id = t.getName()
+            util.debugLog("threadid: " + str(id))
+            t.start()
+
+
+            #path = self.FetchImage()
+            
+            #if not path: break
+            
+            #print "path = ", path
+        
+        return True
 
 class SlideFactory(object):
     """
@@ -85,7 +117,7 @@ class FlickrSlideFactory(SlideFactory):
         self.__ProcessEmailPages(user)
         
     def __ProcessEmailPages(self, user):
-        PER_PAGE = 5
+        PER_PAGE = 50
         page = 0
 
         while True:
@@ -141,6 +173,8 @@ class FlickrSlide(Slide):
         
         Returns True on success.
         """
+        self._localPath = outPath
+        
         # get the URL if it's not already saved
         if not hasattr(self, "_url"): self.GetUrl()
         
@@ -150,10 +184,14 @@ class FlickrSlide(Slide):
             fd = open(outPath, "wb")
             fd.write(data)
         finally:
-            util.debugLog("IOError, closing fd")
             fd.close()
         
+        util.debugLog("Saved " + self._url + " to " + outPath)
+        
         return True
+    
+    def GetLocalPath(self):
+        return self._localPath
     
     
 if __name__ == "__main__":
@@ -162,14 +200,13 @@ if __name__ == "__main__":
     model.Find()
     
     count = 0
-    while True:
-        slide = model.Fetch()
-        if slide is None: break
-        
-        #print slide.GetUrl()
-        slide.GetImage(None)
-        
-        count += 1
+    #while True:
+    #    path = model.FetchImage()
+    #    
+    #    print "fetched path: ", path
+    #    
+    #    count += 1
+    model.Go()
     print "done printing"
 
     
