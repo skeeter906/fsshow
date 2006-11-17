@@ -53,12 +53,12 @@ class SlideshowModel(object):
         self._currentIndex += 1
         return slide
     
-    def FetchImage(self):
-        slide = self.FetchSlide()
+    def FetchImage(self, slide, outPath):
+        #slide = self.FetchSlide()
+        #
+        #if not slide: raise Exception("No more slides")
         
-        if not slide: raise Exception("No more slides")
-        
-        slide.GetImage(str(self._currentIndex) + ".jpg")
+        slide.GetImage(outPath)
         
         path = slide.GetLocalPath()
         
@@ -67,13 +67,15 @@ class SlideshowModel(object):
     def Go(self):
         THREAD_LIMIT = 5
         
-        while True:
+        for k,slide in enumerate(self._slides):
+            
             # limit number of threads
             while threading.activeCount() > THREAD_LIMIT:
                 time.sleep(1)
             
             util.debugLog("creating new thread")
-            t = threading.Thread(target=self.FetchImage)
+            t = threading.Thread(target=self.FetchImage,
+                                 kwargs={"slide":slide, "outPath":str(k) + ".jpg"})
             id = t.getName()
             util.debugLog("threadid: " + str(id))
             t.start()
@@ -155,6 +157,7 @@ class FlickrSlide(Slide):
         """
         Returns the URL (string) of the image.
         """
+        util.debugLog(self._localPath + " fetching URL")
         try:
             url = self._photo.getURL(size='Original', urlType='source')
         except flickr.FlickrError:
@@ -179,6 +182,7 @@ class FlickrSlide(Slide):
         # get the URL if it's not already saved
         if not hasattr(self, "_url"): self.GetUrl()
         
+        util.debugLog(self._localPath + " downloading image")
         data = urllib.urlopen(self._url).read()
         
         try:
