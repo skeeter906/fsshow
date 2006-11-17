@@ -25,7 +25,7 @@ class SlideshowModel(object):
     images are acquired through this interface.
     """
     def __init__(self):
-        self.slides = []
+        self._slides = []
         self._searchParams = {}
         self._currentIndex = 0
 
@@ -44,12 +44,12 @@ class SlideshowModel(object):
         
         newSlides = self.factory.Build(self._searchParams)
         
-        self.slides.extend(newSlides)
+        self._slides.extend(newSlides)
 
     def FetchSlide(self):
-        if self._currentIndex >= len(self.slides): return None
+        if self._currentIndex >= len(self._slides): return None
         
-        slide = self.slides[self._currentIndex]
+        slide = self._slides[self._currentIndex]
         self._currentIndex += 1
         return slide
     
@@ -66,6 +66,7 @@ class SlideshowModel(object):
     
     def Go(self):
         THREAD_LIMIT = 5
+        
         while True:
             # limit number of threads
             while threading.activeCount() > THREAD_LIMIT:
