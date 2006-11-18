@@ -76,13 +76,15 @@ class SlideshowModel(object):
         """
         Get the path of next slide in the show.
         """
+        path = True
+        
         self._lock.acquire()
         util.debugLog("NextImagePath acquired lock")
         if self._currentIndex >= len(self._slides):
-            self._lock.release()
-            raise SlideshowModelDone("End of slideshow")
+            util.debugLog("out of slides")
+            path = None
         
-        path = None
+
         if not self._currentIndex >= len(self._imagePaths):        
             path = self._imagePaths[self._currentIndex]
             self._currentIndex += 1
@@ -97,12 +99,13 @@ class SlideshowModel(object):
         Kicks off the fetching of slide images. Continues to run until worker
         threads have finished.
         """
-        THREAD_LIMIT = threading.activeCount() + 5
+        cnStartThread = threading.activeCount()
+        cnTreadLimit = cnStartThread + 5
         
         for k,slide in enumerate(self._slides):
             
             # limit number of threads
-            while threading.activeCount() > THREAD_LIMIT:
+            while threading.activeCount() > cnTreadLimit:
                 time.sleep(1)
             
             util.debugLog("creating new thread")
@@ -112,7 +115,10 @@ class SlideshowModel(object):
             util.debugLog("threadid: " + str(id))
             t.start()
             
-        while threading.activeCount() > 1: time.sleep(1)
+        while threading.activeCount() > cnStartThread:
+            util.debugLog("waiting for threads " + str(threading.activeCount())
+                          + " to finish")
+            time.sleep(1)
         
         util.debugLog("All threads have completed")
         
@@ -239,18 +245,19 @@ if __name__ == "__main__":
     #model.Start()
     t = threading.Thread(target=model.Start)
     t.start()
-    
-    try:
-        while True:
-            print "calling NextImagePath()"
-            path = model.NextImagePath()
-            if path is None:
-                print "sleeping..."
-                time.sleep(1)
-                print "done sleeping"
-                continue
-            print str(count), ": ", path
-            count += 1
-    except SlideshowModelDone: print "slideshow finished"
+
+    while True:
+        print "calling NextImagePath()"
+        path = model.NextImagePath()
+        if path is True:
+            print "sleeping..."
+            time.sleep(1)
+            print "done sleeping"
+            continue
+        elif path == None:
+            print "slideshow finished"
+            break
+        print str(count), ": ", path
+        count += 1
 
     
