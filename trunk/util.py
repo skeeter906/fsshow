@@ -39,10 +39,12 @@ class ThreadCounter(object):
     def __init__(self, n=0):
         self._n = n
         self._lock = threading.Lock()
+        self._wasTouched = False
     def Add(self, x):
         self._lock.acquire()
         self._n += x
-        self._lock.release()    
+        self._lock.release()
+        self._wasTouched = True
     def Up(self):
         self.Add(1)
     def Down(self):
@@ -51,11 +53,13 @@ class ThreadCounter(object):
         self._lock.acquire()
         self._n = n
         self._lock.release()
+        self._wasTouched = True
     def Get(self):
         self._lock.acquire()
         n = self._n
         self._lock.release()
         return n
+    def WasTouched(self): return self._wasTouched
 
 
 
