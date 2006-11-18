@@ -19,6 +19,8 @@
 
 DEBUG_LEVEL = 1
 
+import threading
+
 def debugLog(msg, level=1):
     if level <= DEBUG_LEVEL: print "debug: " + msg
 
@@ -32,7 +34,40 @@ def info(object, spacing=10, collapse=1):
                       (method.ljust(spacing),
                        processFunc(str(getattr(object, method).__doc__)))
                      for method in methodList])
-    
+
+class ThreadCounter(object):
+    def __init__(self, n=0):
+        self._n = n
+        self._lock = threading.Lock()
+    def Add(self, x):
+        self._lock.acquire()
+        self._n += x
+        self._lock.release()    
+    def Up(self):
+        self.Add(1)
+    def Down(self):
+        self.Add(-1)
+    def Set(self, n):
+        self._lock.acquire()
+        self._n = n
+        self._lock.release()
+    def Get(self):
+        self._lock.acquire()
+        n = self._n
+        self._lock.release()
+        return n
+
+
+
 if __name__ == "__main__":
     debugLog("testing debug", 10)
+    
     print info(info)
+    
+    tc = ThreadCounter()
+    tc.Set(3)
+    tc.Up()
+    tc.Down()
+    tc.Down()
+    print "tc = ", tc.Get()
+    
