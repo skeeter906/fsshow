@@ -33,6 +33,7 @@ class SlideshowModel(object):
         # Thread-sensitive members
         self._imagePaths = []
         self._lock = threading.Lock()
+        self._workerCounter = util.ThreadCounter()        
 
     def SearchParam(self, key, value):
         """
@@ -62,6 +63,7 @@ class SlideshowModel(object):
         """
         Retrieves an image from Flickr and stores it in the model.
         """
+        self._workerCounter.Up()
         slide.GetImage(outPath)
         
         path = slide.GetLocalPath()
@@ -71,6 +73,7 @@ class SlideshowModel(object):
         self._imagePaths.append(path)
         util.debugLog(outPath + " releasing lock")
         self._lock.release()
+        self._workerCounter.Down()
     
     def NextImagePath(self):
         """
@@ -79,7 +82,7 @@ class SlideshowModel(object):
         path = True
         
         self._lock.acquire()
-        util.debugLog("NextImagePath acquired lock")
+        util.debugLog("NextImagePath acquired lock", 2)
         if self._currentIndex >= len(self._slides):
             util.debugLog("out of slides")
             path = None
@@ -89,7 +92,7 @@ class SlideshowModel(object):
             path = self._imagePaths[self._currentIndex]
             self._currentIndex += 1
             
-        util.debugLog("NextImagePath releasing lock")
+        util.debugLog("NextImagePath releasing lock", 2)
         self._lock.release()
         
         return path
@@ -99,14 +102,12 @@ class SlideshowModel(object):
         Kicks off the fetching of slide images. Continues to run until worker
         threads have finished.
         """
-        cnStartThread = threading.activeCount()
-        cnTreadLimit = cnStartThread + 5
+        THREAD_LIMIT = 10
         
         for k,slide in enumerate(self._slides):
             
             # limit number of threads
-            while threading.activeCount() > cnTreadLimit:
-                time.sleep(1)
+            while threading.activeCount() > THREAD_LIMIT: time.sleep(1)
             
             util.debugLog("creating new thread")
             t = threading.Thread(target=self.FetchImage,
@@ -114,9 +115,9 @@ class SlideshowModel(object):
             id = t.getName()
             util.debugLog("threadid: " + str(id))
             t.start()
-            
-        while threading.activeCount() > cnStartThread:
-            util.debugLog("waiting for threads " + str(threading.activeCount())
+        
+        while not self._workerCounter.WasTouched() or self._workerCounter.Get() > 0:
+            util.debugLog("waiting for threads " + str(self._workerCounter.Get())
                           + " to finish")
             time.sleep(1)
         
@@ -150,12 +151,12 @@ class FlickrSlideFactory(SlideFactory):
 
 
     def __ProcessEmail(self):
-        print "processing email"
+        util.debugLog("processing email")
         user = flickr.people_findByEmail("m2@innerlogic.org")
         self.__ProcessEmailPages(user)
         
     def __ProcessEmailPages(self, user):
-        PER_PAGE = 3
+        PER_PAGE = 2
         page = 0
 
         while True:
@@ -247,12 +248,9 @@ if __name__ == "__main__":
     t.start()
 
     while True:
-        print "calling NextImagePath()"
         path = model.NextImagePath()
         if path is True:
-            print "sleeping..."
             time.sleep(1)
-            print "done sleeping"
             continue
         elif path == None:
             print "slideshow finished"
