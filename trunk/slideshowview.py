@@ -39,41 +39,41 @@ class SlideshowView(wx.Frame):
         menu = wx.Menu()
         
         item = menu.Append(-1, "S&tart\tAlt-S", "Start Slideshow")
-        self.app.Bind(wx.EVT_MENU, self.OnStartSlideshow, item)
+        self.app.Bind(wx.EVT_MENU, self._OnStartSlideshow, item)
         item = menu.Append(-1, "E&xit\tAlt-X", "Exit Test")
-        self.app.Bind(wx.EVT_MENU, self.OnExitApp, item)
+        self.app.Bind(wx.EVT_MENU, self._OnExitApp, item)
         
         menuBar.Append(menu, "&File")
         
         self.SetMenuBar(menuBar)
 
-        self.Bind(wx.EVT_CLOSE, self.OnCloseFrame)
+        self.Bind(wx.EVT_CLOSE, self._OnCloseFrame)
         
-        self.window = wx.Panel(self, -1)
+        self._window = wx.Panel(self, -1)
         
-        self.window.SetFocus()
+        self._window.SetFocus()
         
-    def OnExitApp(self, evt):
+    def _OnExitApp(self, evt):
         """
         Handles the exit event.
         """
         self.Close(True)
     
-    def OnCloseFrame(self, evt):
+    def _OnCloseFrame(self, evt):
         """
         Handles the close frame event.
         """
-        if hasattr(self, "window") and hasattr(self.window, "ShutdownDemo"):
-            self.window.ShutdownDemo()
+        if hasattr(self, "window") and hasattr(self._window, "ShutdownDemo"):
+            self._window.ShutdownDemo()
         evt.Skip()
         
-    def OnStartSlideshow(self, evt):
+    def _OnStartSlideshow(self, evt):
         """
         Handles the starting of the slideshow after clicking on the menu option.
         """
         util.debugLog("SlideshowView.OnStart()")
         
-    def start(self):
+    def Start(self):
         '''
         Upon start we just show the frame and enter the MainLoop
         '''
@@ -82,5 +82,5 @@ class SlideshowView(wx.Frame):
 
 if __name__ == "__main__":
     view = SlideshowView()
-    view.start()
+    view.Start()
     
