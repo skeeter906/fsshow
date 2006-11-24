@@ -21,12 +21,15 @@ import util
 import wx
 
 class SlideshowView(wx.Frame):
+    """
+    Slideshow windowing system class, implemented with wxPython.
+    """
     def __init__(self):
         self.app = wx.App(0)
         wx.Frame.__init__(self, None, -1, "fsshow", 
                           size=(800,600), style=wx.DEFAULT_FRAME_STYLE)
         
-        self.SetBackgroundColour("lightgray")
+        self.SetBackgroundColour("black")
         
         self.CenterOnScreen()
         
@@ -36,7 +39,7 @@ class SlideshowView(wx.Frame):
         menu = wx.Menu()
         
         item = menu.Append(-1, "S&tart\tAlt-S", "Start Slideshow")
-        self.app.Bind(wx.EVT_MENU, self.OnStart, item)
+        self.app.Bind(wx.EVT_MENU, self.OnStartSlideshow, item)
         item = menu.Append(-1, "E&xit\tAlt-X", "Exit Test")
         self.app.Bind(wx.EVT_MENU, self.OnExitApp, item)
         
@@ -48,18 +51,26 @@ class SlideshowView(wx.Frame):
         
         self.window = wx.Panel(self, -1)
         
-        #self.Show(True)
         self.window.SetFocus()
         
     def OnExitApp(self, evt):
+        """
+        Handles the exit event.
+        """
         self.Close(True)
     
     def OnCloseFrame(self, evt):
+        """
+        Handles the close frame event.
+        """
         if hasattr(self, "window") and hasattr(self.window, "ShutdownDemo"):
             self.window.ShutdownDemo()
         evt.Skip()
         
-    def OnStart(self, evt):
+    def OnStartSlideshow(self, evt):
+        """
+        Handles the starting of the slideshow after clicking on the menu option.
+        """
         util.debugLog("SlideshowView.OnStart()")
         
     def start(self):
