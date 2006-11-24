@@ -63,7 +63,6 @@ class SlideshowModel(object):
         """
         Retrieves an image from Flickr and stores it in the model.
         """
-        self._workerCounter.Up()
         slide.GetImage(outPath)
         
         path = slide.GetLocalPath()
@@ -102,18 +101,23 @@ class SlideshowModel(object):
         Kicks off the fetching of slide images. Continues to run until worker
         threads have finished.
         """
-        THREAD_LIMIT = 10
+        THREAD_LIMIT = 5
         
         for k,slide in enumerate(self._slides):
-            
             # limit number of threads
-            while threading.activeCount() > THREAD_LIMIT: time.sleep(1)
+            while self._workerCounter.Get() >= THREAD_LIMIT:
+                time.sleep(1)
             
             util.debugLog("creating new thread")
             t = threading.Thread(target=self.FetchImage,
                                  kwargs={"slide":slide, "outPath":str(k) + ".jpg"})
             id = t.getName()
+            
             util.debugLog("threadid: " + str(id))
+            
+            # increment the thread counter before we start
+            self._workerCounter.Up()
+            
             t.start()
         
         while not self._workerCounter.WasTouched() or self._workerCounter.Get() > 0:
