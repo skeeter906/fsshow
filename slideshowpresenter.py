@@ -17,9 +17,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import util
+
 class SlideshowPresenter(object):
     """
-    Standard presenter class for the fsshow program.
+    Standard presenter class for the fsshow program. Is passed all the other
+    main objects in the system.
     """
     def __init__(self, model, view, interactor):
         self.model = model
@@ -27,10 +30,16 @@ class SlideshowPresenter(object):
         self.isListening = True
         #interactor.Install(self, view)
         self.isListening = True
-        #self.initView()
-        #view.start()
+        self.initView()
+        view.start()
+        
+    def initView(self):
+        util.debugLog("SlideshowPresenter.initView()")
         
 if __name__ == "__main__":
     import slideshowmodel
-    presenter = SlideshowPresenter(slideshowmodel.SlideshowModel(), None, None)
+    import slideshowview
+    presenter = SlideshowPresenter(slideshowmodel.SlideshowModel(),
+                                   slideshowview.SlideshowView(),
+                                   None)
     
