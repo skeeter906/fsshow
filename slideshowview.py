@@ -31,7 +31,7 @@ class SlideshowView(wx.Frame):
         
         self.SetBackgroundColour("black")
         
-        self.CenterOnScreen()
+        #self.CenterOnScreen()
         
         self.CreateStatusBar()
         
