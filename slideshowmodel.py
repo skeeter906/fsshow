@@ -51,6 +51,8 @@ class SlideshowModel(object):
         newSlides = self.factory.Build(self._searchParams)
         
         self._slides.extend(newSlides)
+        
+        util.debugLog("Find(): retrieved " + str(len(self._slides)) + " slides")
 
     def FetchSlide(self):
         if self._currentIndex >= len(self._slides): return None
@@ -85,8 +87,7 @@ class SlideshowModel(object):
         if self._currentIndex >= len(self._slides):
             util.debugLog("out of slides")
             path = None
-        
-
+            
         if not self._currentIndex >= len(self._imagePaths):        
             path = self._imagePaths[self._currentIndex]
             self._currentIndex += 1
@@ -160,7 +161,7 @@ class FlickrSlideFactory(SlideFactory):
         self.__ProcessEmailPages(user)
         
     def __ProcessEmailPages(self, user):
-        PER_PAGE = 2
+        PER_PAGE = 5
         page = 0
 
         while True:
@@ -257,9 +258,8 @@ if __name__ == "__main__":
             time.sleep(1)
             continue
         elif path == None:
-            print "slideshow finished"
             break
         print str(count), ": ", path
         count += 1
-
+    print "slideshow finished"
     
