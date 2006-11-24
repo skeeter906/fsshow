@@ -18,6 +18,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import util
+import threading
+import time
 
 class SlideshowPresenter(object):
     """
@@ -33,11 +35,39 @@ class SlideshowPresenter(object):
         view.Start()
         
     def _initView(self):
-        util.debugLog("SlideshowPresenter.initView()")
+        """
+        Sets up any defaults in the view object.
+        """
+        pass
         
     def StartSlideshow(self):
+        """
+        Starts the slideshow. Mostly sets up the model.
+        """
         util.debugLog("SlideshowPresenter.StartSlideshow()")
         
+        self._ModelSearch()
+        self._ModelStart()
+        
+        #count = 0
+        #while True:
+        #    path = self.model.NextImagePath()
+        #    if path is True:
+        #        time.sleep(1)
+        #        continue
+        #    elif path == None:
+        #        break
+        #    print str(count), ": ", path
+        #    count += 1
+        #print "slideshow finished"
+    
+    def _ModelSearch(self):
+        self.model.SearchParam("email", "m2@innerlogic.org")
+        self.model.Find()
+        
+    def _ModelStart(self):
+        t = threading.Thread(target=self.model.Start)
+        t.start()
         
 if __name__ == "__main__":
     import slideshowmodel
