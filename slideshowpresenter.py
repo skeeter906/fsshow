@@ -27,13 +27,12 @@ class SlideshowPresenter(object):
     def __init__(self, model, view, interactor):
         self.model = model
         self.view = view
-        self.isListening = True
         #interactor.Install(self, view)
-        self.isListening = True
-        self.initView()
-        view.start()
+        self._isListening = True
+        self._initView()
+        view.Start()
         
-    def initView(self):
+    def _initView(self):
         util.debugLog("SlideshowPresenter.initView()")
         
     def StartSlideshow(self):
