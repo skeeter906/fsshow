@@ -38,8 +38,7 @@ class SlideshowView(wx.Frame):
         menuBar = wx.MenuBar()
         menu = wx.Menu()
         
-        item = menu.Append(-1, "S&tart\tAlt-S", "Start Slideshow")
-        self.app.Bind(wx.EVT_MENU, self._OnStartSlideshow, item)
+        self.startSlideshowLink = menu.Append(-1, "S&tart\tAlt-S", "Start Slideshow")
         item = menu.Append(-1, "E&xit\tAlt-X", "Exit Test")
         self.app.Bind(wx.EVT_MENU, self._OnExitApp, item)
         
@@ -66,12 +65,6 @@ class SlideshowView(wx.Frame):
         if hasattr(self, "window") and hasattr(self._window, "ShutdownDemo"):
             self._window.ShutdownDemo()
         evt.Skip()
-        
-    def _OnStartSlideshow(self, evt):
-        """
-        Handles the starting of the slideshow after clicking on the menu option.
-        """
-        util.debugLog("SlideshowView.OnStart()")
         
     def Start(self):
         '''
