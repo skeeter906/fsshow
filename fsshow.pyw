@@ -20,7 +20,8 @@
 import slideshowmodel
 import slideshowview
 import slideshowinteractor
+import slideshowpresenter
 
-presenter = SlideshowPresenter(slideshowmodel.SlideshowModel(),
+presenter = slideshowpresenter.SlideshowPresenter(slideshowmodel.SlideshowModel(),
                                slideshowview.SlideshowView(),
                                slideshowinteractor.SlideshowInteractor())
