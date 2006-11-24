@@ -49,6 +49,8 @@ class SlideshowPresenter(object):
         self._ModelSearch()
         self._ModelStart()
         
+        self.ShowNextSlide()
+        
         #count = 0
         #while True:
         #    path = self.model.NextImagePath()
@@ -68,6 +70,28 @@ class SlideshowPresenter(object):
     def _ModelStart(self):
         t = threading.Thread(target=self.model.Start)
         t.start()
+    
+    def ShowNextSlide(self):
+        path = self.model.NextImagePath()
+        if path is True:
+            # need to wait more for another slide
+            util.debugLog("need to wait more for another slide")
+        elif path == None:
+            # no more slides
+            util.debugLog("no more slides")
+            raise Exception("no more slides")
+        else:
+            print "path: ", path
+        
+        # Init timer to call again in a bit
+        self._SetTimer()
+        
+    def _SetTimer(self, waitSecs=5):
+        """
+        Initializes a Timer to show the next slide in the queue after a few
+        seconds.
+        """
+        threading.Timer(waitSecs, self.ShowNextSlide).start()
         
 if __name__ == "__main__":
     import slideshowmodel

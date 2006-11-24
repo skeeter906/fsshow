@@ -35,5 +35,12 @@ class SlideshowInteractor(object):
         """
         util.debugLog("SlideshowInteractor._OnStartSlideshow()")
         self.presenter.StartSlideshow()
+        
+    def _OnNextSlide(self, evt):
+        """
+        Handles event to trigger the next slide.
+        """
+        util.debugLog("SlideshowInteractor._OnNextSlide()")
+        self.presenter.ShowNextSlide()
     
     
