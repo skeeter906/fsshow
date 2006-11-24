@@ -22,6 +22,10 @@ import slideshowview
 import slideshowinteractor
 import slideshowpresenter
 
+"""
+Simple pyw program to create the presenter and pass it the model, view and
+interactor.
+"""
 presenter = slideshowpresenter.SlideshowPresenter(slideshowmodel.SlideshowModel(),
                                slideshowview.SlideshowView(),
                                slideshowinteractor.SlideshowInteractor())
