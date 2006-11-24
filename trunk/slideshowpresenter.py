@@ -36,6 +36,10 @@ class SlideshowPresenter(object):
     def initView(self):
         util.debugLog("SlideshowPresenter.initView()")
         
+    def StartSlideshow(self):
+        util.debugLog("SlideshowPresenter.StartSlideshow()")
+        
+        
 if __name__ == "__main__":
     import slideshowmodel
     import slideshowview
