@@ -27,7 +27,7 @@ class SlideshowPresenter(object):
     def __init__(self, model, view, interactor):
         self.model = model
         self.view = view
-        #interactor.Install(self, view)
+        interactor.Install(self, view)
         self._isListening = True
         self._initView()
         view.Start()
@@ -42,7 +42,8 @@ class SlideshowPresenter(object):
 if __name__ == "__main__":
     import slideshowmodel
     import slideshowview
+    import slideshowinteractor    
     presenter = SlideshowPresenter(slideshowmodel.SlideshowModel(),
                                    slideshowview.SlideshowView(),
-                                   None)
+                                   slideshowinteractor.SlideshowInteractor())
     

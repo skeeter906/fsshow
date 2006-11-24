@@ -17,3 +17,23 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+import wx
+import util
+
+class SlideshowInteractor(object):
+    '''
+    This class translates the low level events into the "higher level language" of the presenter
+    '''
+    def Install(self, presenter, view):
+        self.presenter = presenter
+        self.view = view
+        view.app.Bind(wx.EVT_MENU, self._OnStartSlideshow, view.startSlideshowLink)
+        
+    def _OnStartSlideshow(self, evt):
+        """
+        Handles the starting of the slideshow after clicking on the menu option.
+        """
+        util.debugLog("SlideshowInteractor._OnStartSlideshow()")
+        self.presenter.StartSlideshow()
+    
+    
