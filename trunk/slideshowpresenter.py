@@ -49,7 +49,7 @@ class SlideshowPresenter(object):
         
         self._ModelSearch()
         self._ModelStart()
-        self._SetTimer()
+        self.StartTimer()
     
     def _ModelSearch(self):
         self.view.UpdateStatus("Searching for photos...")
@@ -75,18 +75,25 @@ class SlideshowPresenter(object):
             self.view.ShowImage(path)
         
         # Init timer to call again in a bit
-        if not blockTimer: self._SetTimer()
+        if not blockTimer: self.StartTimer()
     
     def CleanupSlideshow(self):
         self.model.Stop()
         
-    def _SetTimer(self, waitSecs=5):
+    def StartTimer(self, waitSecs=5):
         """
         Initializes a Timer to show the next slide in the queue after a few
         seconds.
         """
         #threading.Timer(waitSecs, self.ShowNextSlide).start()
         self.interactor.StartTimer(waitSecs)
+
+    def StopTimer(self):
+        """
+        Stops the timer if it's running.
+        """
+        #threading.Timer(waitSecs, self.ShowNextSlide).start()
+        self.interactor.StopTimer()
         
 if __name__ == "__main__":
     import slideshowmodel
