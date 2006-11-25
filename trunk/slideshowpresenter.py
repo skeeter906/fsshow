@@ -65,10 +65,13 @@ class SlideshowPresenter(object):
         path = self.model.NextImagePath()
         if path is True:
             util.debugLog("need to wait more for another slide",2)
+            self.view.UpdateStatus("Waiting for next image to download...")
         elif path == None:
             util.debugLog("no more slides")
+            self.view.UpdateStatus("Slideshow finished.")
             return
         else:
+            self.view.UpdateStatus("Playing slideshow...")
             self.view.ShowImage(path)
         
         # Init timer to call again in a bit
