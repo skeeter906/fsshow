@@ -36,8 +36,8 @@ class SlideshowView(wx.Frame):
         menu = wx.Menu()
         
         self.startSlideshowLink = menu.Append(-1, "S&tart Slideshow\tAlt-S", "Start Slideshow")
-        self.nextSlideLink = menu.Append(-1, "N&ext\tAlt-N", "Next Image")
-        self.previousSlideLink = menu.Append(-1, "P&revious\tAlt-P", "Previous Image")
+        self.nextSlideLink = menu.Append(-1, "N&ext\tRight", "Next Image")
+        self.previousSlideLink = menu.Append(-1, "P&revious\tLeft", "Previous Image")
         self.exitLink = menu.Append(-1, "E&xit\tAlt-X", "Exit")
         
         menuBar.Append(menu, "&File")
