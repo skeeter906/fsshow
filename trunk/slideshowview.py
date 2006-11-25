@@ -74,6 +74,10 @@ class SlideshowView(wx.Frame):
         
     def ShowImage(self, imagePath):
         util.debugLog("slideshowview.ShowImage()")
+
+        # added to fix problem with statusbar/title update not appearing
+        wx.YieldIfNeeded()
+        util.debugLog("ShowImage() YIELDING",2)
         
         # resize the image
         fitted = imaging.FitImage(imagePath)
@@ -86,6 +90,8 @@ class SlideshowView(wx.Frame):
                                           wx.Point(0,0),
                                           wx.Size(image.GetWidth(),
                                                   image.GetHeight()))
+
+        util.debugLog("ShowImage() done",2)
         
     def DestroyBmp(self):
         util.debugLog("slideshowview.DestroyBmp()")
