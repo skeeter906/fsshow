@@ -29,7 +29,7 @@ class SlideshowView(wx.Frame):
         wx.Frame.__init__(self, None, -1, "fsshow", 
                           size=(800,600), style=wx.DEFAULT_FRAME_STYLE)
         
-        self.SetBackgroundColour("black")
+        self.SetBackgroundColour("lightgray")
         
         #self.CenterOnScreen()
         
@@ -38,9 +38,13 @@ class SlideshowView(wx.Frame):
         menuBar = wx.MenuBar()
         menu = wx.Menu()
         
-        self.startSlideshowLink = menu.Append(-1, "S&tart\tAlt-S", "Start Slideshow")
+        self.startSlideshowLink = menu.Append(-1, "S&tart Slideshow\tAlt-S", "Start Slideshow")
+        self.startTimerLink = menu.Append(-1, "Start T&imer\tAlt-T", "Start Timer")
+        self.nextSlideLink = menu.Append(-1, "N&ext\tAlt-N", "Next Image")
+
         item = menu.Append(-1, "E&xit\tAlt-X", "Exit Test")
         self.app.Bind(wx.EVT_MENU, self._OnExitApp, item)
+        
         
         menuBar.Append(menu, "&File")
         
@@ -72,6 +76,23 @@ class SlideshowView(wx.Frame):
         '''
         self.Show()
         self.app.MainLoop()
+        
+    def ShowImage(self, imagePath):
+        util.debugLog("slideshowview.ShowImage()")
+        
+        self.DestroyBmp()
+        
+        image = wx.Image(imagePath, wx.BITMAP_TYPE_JPEG)
+        bmp = wx.BitmapFromImage(image)
+        self._staticBmp = wx.StaticBitmap(self._window, wx.ID_ANY, bmp,
+                                          wx.Point(0,0),
+                                          wx.Size(image.GetWidth(),
+                                                  image.GetHeight()))
+        
+    def DestroyBmp(self):
+        util.debugLog("slideshowview.DestroyBmp()")
+        if hasattr(self, "_staticBmp"): self._staticBmp.Destroy()
+        
 
 if __name__ == "__main__":
     view = SlideshowView()
