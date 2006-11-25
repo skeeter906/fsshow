@@ -104,6 +104,63 @@ class SlideshowModel(object):
         
         return path
 
+    def CurrentImagePath(self):
+        """
+        Returns the path of the current slide in the show.
+        """
+        print "CurrentImagePath(): currentIndex = ", self._currentIndex, " len(slides) = ", len(self._slides), " len(imagePaths) = ", len(self._imagePaths)
+        return self._imagePaths[self._currentIndex]
+
+    def AddIndex(self, n):
+        """
+        Adds n to the current slide index. May be positive or
+        negative.
+        Returns True on success; None if there is a slide(s) left by
+        it is still downloading; False if there are no more slides in
+        the queue.
+        """
+        self._lock.acquire()
+        util.debugLog("AddIndex() acquired lock", 2)
+
+        print "AddIndex(): currentIndex = ", self._currentIndex, " len(slides) = ", len(self._slides), " len(imagePaths) = ", len(self._imagePaths)
+        
+        if self._currentIndex+n >= len(self._slides) or self._currentIndex+n < 0:
+            # out of slides
+            util.debugLog("out of slides")
+            status = False  
+        elif self._currentIndex+n >= len(self._imagePaths):
+            # wait for more to download
+            util.debugLog("wait for more slides to download",2)
+            status = None
+        else:
+            # found a slide
+            util.debugLog("found a slide",2)
+            status = True
+            self._currentIndex += n
+            
+        util.debugLog("AddIndex() releasing lock", 2)
+        self._lock.release()
+        
+        return status
+        
+    def Next(self):
+        """
+        Moves the current index to the next slide.
+        Returns True on success; None if there is a slide(s) left by
+        it is still downloading; False if there are no more slides in
+        the queue.
+        """
+        return self.AddIndex(1)
+    
+    def Previous(self):
+        """
+        Moves the current index to the previous slide.
+        Returns True on success; None if there is a slide(s) left by
+        it is still downloading; False if there are no more slides in
+        the queue.
+        """        
+        return self.AddIndex(-1)
+        
     def Start(self):
         """
         Kicks off the fetching of slide images. Continues to run until worker
