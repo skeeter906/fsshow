@@ -32,15 +32,18 @@ class SlideshowView(wx.Frame):
         
         self._statusBar = self.CreateStatusBar()
         
-        menuBar = wx.MenuBar()
         menu = wx.Menu()
-        
-        self.startSlideshowLink = menu.Append(-1, "S&tart Slideshow\tAlt-S", "Start Slideshow")
-        self.nextSlideLink = menu.Append(-1, "N&ext\tRight", "Next Image")
-        self.previousSlideLink = menu.Append(-1, "P&revious\tLeft", "Previous Image")
         self.exitLink = menu.Append(-1, "E&xit\tAlt-X", "Exit")
         
+        menuBar = wx.MenuBar()
+
         menuBar.Append(menu, "&File")
+
+        menu = wx.Menu()
+        self.startSlideshowLink = menu.Append(-1, "S&tart Slideshow\tCtrl-S", "Start Slideshow")
+        self.nextSlideLink = menu.Append(-1, "N&ext\tRight", "Next Image")
+        self.previousSlideLink = menu.Append(-1, "P&revious\tLeft", "Previous Image")
+        menuBar.Append(menu, "&Slideshow")
         
         self.SetMenuBar(menuBar)
 
