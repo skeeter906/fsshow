@@ -70,9 +70,9 @@ class SlideshowModel(object):
         path = slide.GetLocalPath()
         
         self._lock.acquire()
-        util.debugLog(outPath + " acquired lock")
+        util.debugLog(outPath + " acquired lock",2)
         self._imagePaths.append(path)
-        util.debugLog(outPath + " releasing lock")
+        util.debugLog(outPath + " releasing lock",2)
         self._lock.release()
         self._workerCounter.Down()
     
@@ -114,7 +114,7 @@ class SlideshowModel(object):
                                  kwargs={"slide":slide, "outPath":str(k) + ".jpg"})
             id = t.getName()
             
-            util.debugLog("threadid: " + str(id))
+            util.debugLog("threadid: " + str(id),2)
             
             # increment the thread counter before we start
             self._workerCounter.Up()
@@ -198,7 +198,7 @@ class FlickrSlide(Slide):
         """
         Returns the URL (string) of the image.
         """
-        util.debugLog(self._localPath + " fetching URL")
+        util.debugLog(self._localPath + " fetching URL",2)
         try:
             url = self._photo.getURL(size='Original', urlType='source')
         except flickr.FlickrError:
@@ -223,7 +223,7 @@ class FlickrSlide(Slide):
         # get the URL if it's not already saved
         if not hasattr(self, "_url"): self.GetUrl()
         
-        util.debugLog(self._localPath + " downloading image")
+        util.debugLog(self._localPath + " downloading image",2)
         data = urllib.urlopen(self._url).read()
         
         try:

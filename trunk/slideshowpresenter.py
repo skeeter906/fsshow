@@ -29,6 +29,7 @@ class SlideshowPresenter(object):
     def __init__(self, model, view, interactor):
         self.model = model
         self.view = view
+        self.interactor = interactor
         interactor.Install(self, view)
         self._isListening = True
         self._initView()
@@ -48,20 +49,7 @@ class SlideshowPresenter(object):
         
         self._ModelSearch()
         self._ModelStart()
-        
-        self.ShowNextSlide()
-        
-        #count = 0
-        #while True:
-        #    path = self.model.NextImagePath()
-        #    if path is True:
-        #        time.sleep(1)
-        #        continue
-        #    elif path == None:
-        #        break
-        #    print str(count), ": ", path
-        #    count += 1
-        #print "slideshow finished"
+        self._SetTimer()
     
     def _ModelSearch(self):
         self.model.SearchParam("email", "m2@innerlogic.org")
@@ -71,7 +59,7 @@ class SlideshowPresenter(object):
         t = threading.Thread(target=self.model.Start)
         t.start()
     
-    def ShowNextSlide(self):
+    def ShowNextSlide(self, blockTimer=False):
         path = self.model.NextImagePath()
         if path is True:
             # need to wait more for another slide
@@ -79,19 +67,21 @@ class SlideshowPresenter(object):
         elif path == None:
             # no more slides
             util.debugLog("no more slides")
-            raise Exception("no more slides")
+            return
         else:
             print "path: ", path
+            self.view.ShowImage(path)
         
         # Init timer to call again in a bit
-        self._SetTimer()
+        if not blockTimer: self._SetTimer()
         
     def _SetTimer(self, waitSecs=5):
         """
         Initializes a Timer to show the next slide in the queue after a few
         seconds.
         """
-        threading.Timer(waitSecs, self.ShowNextSlide).start()
+        #threading.Timer(waitSecs, self.ShowNextSlide).start()
+        self.interactor.StartTimer(waitSecs)
         
 if __name__ == "__main__":
     import slideshowmodel
