@@ -73,7 +73,7 @@ class SlideshowPresenter(object):
             self.view.UpdateStatus("Waiting for next image to download...")
         elif status == False:
             util.debugLog("no more slides")
-            self.view.UpdateStatus("Slideshow finished.")
+            self.view.UpdateStatus("Slideshow finished")
             return
         else:
             self.view.UpdateStatus("Drawing Image...")
@@ -81,8 +81,10 @@ class SlideshowPresenter(object):
             path = self.model.CurrentImagePath()
             self._first = False
             self.view.ShowImage(path)
-            self.view.UpdateStatus("Playing slideshow...")
-        
+
+            if blockTimer: self.view.UpdateStatus("Ready")
+            else: self.view.UpdateStatus("Playing slideshow...")
+            
         # Init timer to call again in a bit
         if not blockTimer: self.StartTimer()
     
