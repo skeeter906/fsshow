@@ -46,7 +46,7 @@ class SlideshowInteractor(object):
         util.debugLog("SlideshowInteractor._OnNextSlide()")
         self.presenter.ShowNextSlide(True)
             
-    def StartTimer(self, waitSecs=5):
+    def StartTimer(self, waitSecs):
         """
         Initializes the timer in the presenter using wx.FutureCall.
         """
@@ -65,13 +65,13 @@ class SlideshowInteractor(object):
         self.view.Close(True)
 
     def ToggleTimer(self):
-        if hasattr(self, "_timer") and self._timer.IsRunning(): self.StopTimer()
-        else: self.StartTimer()
+        if hasattr(self, "_timer") and self._timer.IsRunning(): self.presenter.StopTimer()
+        else: self.presenter.StartTimer()
 
     def _OnKey(self, evt):
         if evt.GetKeyCode() == wx.WXK_RIGHT:
             print "right"
-            self.StopTimer()
+            self.presenter.StopTimer()
             self.presenter.ShowNextSlide(True)
         elif evt.GetKeyCode() == wx.WXK_LEFT:
             print "left"
