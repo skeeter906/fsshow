@@ -18,6 +18,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from PIL import Image
+import shutil
 
 class FitImage(object):
     def __init__(self, imagePath):
@@ -29,8 +30,26 @@ class FitImage(object):
         newPath = "fitted_" + self._imagePath
         im.save(newPath)
         return newPath
+    
+    def DownsizeFit(self, xy):
+        x,y = xy
+        imX,imY = self._im.size
+        
+        if x >= imX and y >= imY:
+            shutil.copyfile(self._imagePath, "fitted_" + self._imagePath)
+            return "fitted_" + self._imagePath
+
+        xCoeff = float(x)/float(imX)
+        yCoeff = float(y)/float(imY)
+        
+        coeff = min(xCoeff, yCoeff)
+        
+        newX = int(imX*coeff)
+        newY = int(imY*coeff)
+        
+        return self.Resize((newX,newY))
 
 if __name__ == "__main__":
-    fitted = FitImage("0.jpg")
-    print fitted.Resize((800,600))
+    fitted = FitImage("1.jpg")
+    print fitted.DownsizeFit((800,600))
     
