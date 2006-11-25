@@ -29,6 +29,7 @@ class SlideshowInteractor(object):
         self.view = view
         view.app.Bind(wx.EVT_MENU, self._OnStartSlideshow, view.startSlideshowLink)
         view.app.Bind(wx.EVT_MENU, self._OnNextSlide, view.nextSlideLink)
+        view.app.Bind(wx.EVT_MENU, self._OnPreviousSlide, view.previousSlideLink)
         view.app.Bind(wx.EVT_MENU, self._OnExitApp, view.exitLink)    
         view.app.Bind(wx.EVT_CHAR, self._OnKey)
 
@@ -44,14 +45,21 @@ class SlideshowInteractor(object):
         Handles event to trigger the next slide.
         """
         util.debugLog("SlideshowInteractor._OnNextSlide()")
-        self.presenter.ShowNextSlide(True)
+        self.presenter.ShiftSlide(blockTimer=True)
+            
+    def _OnPreviousSlide(self, evt):
+        """
+        Handles event to trigger the previous slide.
+        """
+        util.debugLog("SlideshowInteractor._OnPreviousSlide()")
+        self.presenter.ShiftSlide(shift=-1, blockTimer=True)
             
     def StartTimer(self, waitSecs):
         """
         Initializes the timer in the presenter using wx.FutureCall.
         """
         util.debugLog("starting timer",2)
-        self._timer = wx.FutureCall(waitSecs*1000, self.presenter.ShowNextSlide)
+        self._timer = wx.FutureCall(waitSecs*1000, self.presenter.ShiftSlide)
         
     def StopTimer(self):
         if hasattr(self, "_timer"): self._timer.Stop()
@@ -70,13 +78,15 @@ class SlideshowInteractor(object):
 
     def _OnKey(self, evt):
         if evt.GetKeyCode() == wx.WXK_RIGHT:
-            print "right"
+            util.debugLog("wx.WXK_RIGHT",2)
             self.presenter.StopTimer()
-            self.presenter.ShowNextSlide(True)
+            self.presenter.ShiftSlide(blockTimer=True)
         elif evt.GetKeyCode() == wx.WXK_LEFT:
-            print "left"
+            util.debugLog("wx.WXK_LEFT",2)
+            self.presenter.StopTimer()
+            self.presenter.ShiftSlide(shift=-1,blockTimer=True)
         elif evt.GetKeyCode() == wx.WXK_SPACE:
-            print "space"
+            util.debugLog("wx.WXK_SPACE",2)
             self.ToggleTimer()
         
         
