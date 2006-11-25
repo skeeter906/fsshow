@@ -29,8 +29,9 @@ class SlideshowInteractor(object):
         self.view = view
         view.app.Bind(wx.EVT_MENU, self._OnStartSlideshow, view.startSlideshowLink)
         view.app.Bind(wx.EVT_MENU, self._OnNextSlide, view.nextSlideLink)
-        view.app.Bind(wx.EVT_MENU, self._OnExitApp, view.exitLink)
-        
+        view.app.Bind(wx.EVT_MENU, self._OnExitApp, view.exitLink)    
+        view.app.Bind(wx.EVT_CHAR, self._OnKey)
+
     def _OnStartSlideshow(self, evt):
         """
         Handles the starting of the slideshow after clicking on the menu option.
@@ -45,17 +46,39 @@ class SlideshowInteractor(object):
         util.debugLog("SlideshowInteractor._OnNextSlide()")
         self.presenter.ShowNextSlide(True)
             
-    def StartTimer(self, waitSecs):
+    def StartTimer(self, waitSecs=5):
         """
         Initializes the timer in the presenter using wx.FutureCall.
         """
-        wx.FutureCall(waitSecs*1000, self.presenter.ShowNextSlide)
-    
+        util.debugLog("starting timer",2)
+        self._timer = wx.FutureCall(waitSecs*1000, self.presenter.ShowNextSlide)
+        
+    def StopTimer(self):
+        if hasattr(self, "_timer"): self._timer.Stop()
+        util.debugLog("stopping timer",2)
+        
     def _OnExitApp(self, evt):
         """
         Handles the exit event.
         """        
-        self.presenter.StopSlideshow()
+        self.presenter.CleanupSlideshow()
         self.view.Close(True)
+
+    def ToggleTimer(self):
+        if hasattr(self, "_timer") and self._timer.IsRunning(): self.StopTimer()
+        else: self.StartTimer()
+
+    def _OnKey(self, evt):
+        if evt.GetKeyCode() == wx.WXK_RIGHT:
+            print "right"
+            self.StopTimer()
+            self.presenter.ShowNextSlide(True)
+        elif evt.GetKeyCode() == wx.WXK_LEFT:
+            print "left"
+        elif evt.GetKeyCode() == wx.WXK_SPACE:
+            print "space"
+            self.ToggleTimer()
+        
+        
         
     
