@@ -95,14 +95,12 @@ class SlideshowPresenter(object):
         Initializes a Timer to show the next slide in the queue after a few
         seconds.
         """
-        #threading.Timer(waitSecs, self.ShowNextSlide).start()
         self.interactor.StartTimer(waitSecs)
 
     def StopTimer(self):
         """
         Stops the timer if it's running.
         """
-        #threading.Timer(waitSecs, self.ShowNextSlide).start()
         self.interactor.StopTimer()
         
 if __name__ == "__main__":
