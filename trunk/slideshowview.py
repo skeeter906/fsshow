@@ -64,7 +64,7 @@ class SlideshowView(wx.Frame):
         """
         Handles the close frame event.
         """
-        if hasattr(self, "window") and hasattr(self._window, "ShutdownDemo"):
+        if hasattr(self, "_window") and hasattr(self._window, "ShutdownDemo"):
             self._window.ShutdownDemo()
         evt.Skip()
         
