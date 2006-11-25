@@ -62,18 +62,18 @@ class SlideshowPresenter(object):
     def ShowNextSlide(self, blockTimer=False):
         path = self.model.NextImagePath()
         if path is True:
-            # need to wait more for another slide
-            util.debugLog("need to wait more for another slide")
+            util.debugLog("need to wait more for another slide",2)
         elif path == None:
-            # no more slides
             util.debugLog("no more slides")
             return
         else:
-            print "path: ", path
             self.view.ShowImage(path)
         
         # Init timer to call again in a bit
         if not blockTimer: self._SetTimer()
+    
+    def StopSlideshow(self):
+        self.model.Stop()
         
     def _SetTimer(self, waitSecs=5):
         """

@@ -29,6 +29,7 @@ class SlideshowInteractor(object):
         self.view = view
         view.app.Bind(wx.EVT_MENU, self._OnStartSlideshow, view.startSlideshowLink)
         view.app.Bind(wx.EVT_MENU, self._OnNextSlide, view.nextSlideLink)
+        view.app.Bind(wx.EVT_MENU, self._OnExitApp, view.exitLink)
         
     def _OnStartSlideshow(self, evt):
         """
@@ -45,6 +46,16 @@ class SlideshowInteractor(object):
         self.presenter.ShowNextSlide(True)
             
     def StartTimer(self, waitSecs):
+        """
+        Initializes the timer in the presenter using wx.FutureCall.
+        """
         wx.FutureCall(waitSecs*1000, self.presenter.ShowNextSlide)
+    
+    def _OnExitApp(self, evt):
+        """
+        Handles the exit event.
+        """        
+        self.presenter.StopSlideshow()
+        self.view.Close(True)
         
     
