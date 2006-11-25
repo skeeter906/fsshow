@@ -33,7 +33,9 @@ class SlideshowModel(object):
         # Thread-sensitive members
         self._imagePaths = []
         self._lock = threading.Lock()
-        self._workerCounter = util.ThreadCounter()        
+        self._workerCounter = util.ThreadCounter()
+        
+        self._continue = True
 
     def SearchParam(self, key, value):
         """
@@ -105,6 +107,8 @@ class SlideshowModel(object):
         THREAD_LIMIT = 5
         
         for k,slide in enumerate(self._slides):
+            # check to see if Stop() was called
+            if not self._continue: break
             # limit number of threads
             while self._workerCounter.Get() >= THREAD_LIMIT:
                 time.sleep(1)
@@ -129,6 +133,9 @@ class SlideshowModel(object):
         util.debugLog("All threads have completed")
         
         return True
+    
+    def Stop(self):
+        self._continue = False
 
 class SlideFactory(object):
     """

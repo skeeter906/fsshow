@@ -27,7 +27,7 @@ class SlideshowView(wx.Frame):
     def __init__(self):
         self.app = wx.App(0)
         wx.Frame.__init__(self, None, -1, "fsshow", 
-                          size=(800,600), style=wx.DEFAULT_FRAME_STYLE)
+                          size=(800,600), style=(wx.DEFAULT_FRAME_STYLE|wx.MAXIMIZE))
         
         self.SetBackgroundColour("lightgray")
         
@@ -40,10 +40,7 @@ class SlideshowView(wx.Frame):
         
         self.startSlideshowLink = menu.Append(-1, "S&tart Slideshow\tAlt-S", "Start Slideshow")
         self.nextSlideLink = menu.Append(-1, "N&ext\tAlt-N", "Next Image")
-
-        item = menu.Append(-1, "E&xit\tAlt-X", "Exit Test")
-        self.app.Bind(wx.EVT_MENU, self._OnExitApp, item)
-        
+        self.exitLink = menu.Append(-1, "E&xit\tAlt-X", "Exit")
         
         menuBar.Append(menu, "&File")
         
@@ -54,13 +51,7 @@ class SlideshowView(wx.Frame):
         self._window = wx.Panel(self, -1)
         
         self._window.SetFocus()
-        
-    def _OnExitApp(self, evt):
-        """
-        Handles the exit event.
-        """
-        self.Close(True)
-    
+            
     def _OnCloseFrame(self, evt):
         """
         Handles the close frame event.
@@ -82,6 +73,7 @@ class SlideshowView(wx.Frame):
         self.DestroyBmp()
         
         image = wx.Image(imagePath, wx.BITMAP_TYPE_JPEG)
+        
         bmp = wx.BitmapFromImage(image)
         self._staticBmp = wx.StaticBitmap(self._window, wx.ID_ANY, bmp,
                                           wx.Point(0,0),
