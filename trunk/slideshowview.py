@@ -30,8 +30,6 @@ class SlideshowView(wx.Frame):
         wx.Frame.__init__(self, None, -1, "fsshow", 
                           size=(800,600), style=(wx.DEFAULT_FRAME_STYLE))#|wx.MAXIMIZE))
         
-        self.SetBackgroundColour("black")
-        
         self._statusBar = self.CreateStatusBar()
         
         menuBar = wx.MenuBar()
@@ -48,6 +46,8 @@ class SlideshowView(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self._OnCloseFrame)
         
         self._window = wx.Panel(self, -1)
+
+        self._window.SetBackgroundColour("black")        
         
         self._window.SetFocus()
     
