@@ -81,34 +81,12 @@ class SlideshowModel(object):
         self._imagePaths.append(path)
         util.debugLog(outPath + " releasing lock",2)
         self._lock.release()
-        self._workerCounter.Down()
-    
-    def NextImagePath(self):
-        """
-        Get the path of next slide in the show.
-        """
-        path = True
-        
-        self._lock.acquire()
-        util.debugLog("NextImagePath acquired lock", 2)
-        if self._currentIndex >= len(self._slides):
-            util.debugLog("out of slides")
-            path = None
-            
-        if not self._currentIndex >= len(self._imagePaths):        
-            path = self._imagePaths[self._currentIndex]
-            self._currentIndex += 1
-            
-        util.debugLog("NextImagePath releasing lock", 2)
-        self._lock.release()
-        
-        return path
+        self._workerCounter.Down()    
 
     def CurrentImagePath(self):
         """
         Returns the path of the current slide in the show.
         """
-        print "CurrentImagePath(): currentIndex = ", self._currentIndex, " len(slides) = ", len(self._slides), " len(imagePaths) = ", len(self._imagePaths)
         return self._imagePaths[self._currentIndex]
 
     def AddIndex(self, n):
@@ -122,8 +100,6 @@ class SlideshowModel(object):
         self._lock.acquire()
         util.debugLog("AddIndex() acquired lock", 2)
 
-        print "AddIndex(): currentIndex = ", self._currentIndex, " len(slides) = ", len(self._slides), " len(imagePaths) = ", len(self._imagePaths)
-        
         if self._currentIndex+n >= len(self._slides) or self._currentIndex+n < 0:
             # out of slides
             util.debugLog("out of slides")
@@ -320,12 +296,13 @@ if __name__ == "__main__":
     t.start()
 
     while True:
-        path = model.NextImagePath()
-        if path is True:
+        status = model.Next()
+        if status is None:
             time.sleep(1)
             continue
-        elif path == None:
+        elif status is False:
             break
+        path = model.CurrentImagePath()
         print str(count), ": ", path
         count += 1
     print "slideshow finished"
