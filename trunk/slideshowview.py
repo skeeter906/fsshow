@@ -32,7 +32,7 @@ class SlideshowView(wx.Frame):
         
         self.SetBackgroundColour("black")
         
-        self.CreateStatusBar()
+        self._statusBar = self.CreateStatusBar()
         
         menuBar = wx.MenuBar()
         menu = wx.Menu()
@@ -50,7 +50,10 @@ class SlideshowView(wx.Frame):
         self._window = wx.Panel(self, -1)
         
         self._window.SetFocus()
-            
+    
+    def UpdateStatus(self, text):
+        self._statusBar.SetStatusText(text)
+        
     def _OnCloseFrame(self, evt):
         """
         Handles the close frame event.
