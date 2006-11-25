@@ -174,7 +174,7 @@ class FlickrSlideFactory(SlideFactory):
         
     def __ProcessEmailPages(self, user):
         PER_PAGE = 5
-        page = 0
+        page = 1
 
         while True:
             photos = flickr.favorites_getPublicList(user.id, PER_PAGE, page)
@@ -182,8 +182,7 @@ class FlickrSlideFactory(SlideFactory):
             self.photos.extend(slides)
             if len(photos) < PER_PAGE: break
             if len(self.photos) > PER_PAGE * 2: break
-
-
+            page += 1
     
 class Slide(object):
     """
@@ -260,7 +259,6 @@ if __name__ == "__main__":
     model.SearchParam("email", "m2@innerlogic.org")
     model.Find()
     
-    #model.Start()
     t = threading.Thread(target=model.Start)
     t.start()
 
