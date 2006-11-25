@@ -39,7 +39,6 @@ class SlideshowView(wx.Frame):
         menu = wx.Menu()
         
         self.startSlideshowLink = menu.Append(-1, "S&tart Slideshow\tAlt-S", "Start Slideshow")
-        self.startTimerLink = menu.Append(-1, "Start T&imer\tAlt-T", "Start Timer")
         self.nextSlideLink = menu.Append(-1, "N&ext\tAlt-N", "Next Image")
 
         item = menu.Append(-1, "E&xit\tAlt-X", "Exit Test")
