@@ -32,6 +32,7 @@ class SlideshowPresenter(object):
         self.interactor = interactor
         interactor.Install(self, view)
         self._isListening = True
+        self._first = True
         #self._initView()
         view.Start()
         
@@ -62,17 +63,26 @@ class SlideshowPresenter(object):
         t.start()
     
     def ShowNextSlide(self, blockTimer=False):
-        path = self.model.NextImagePath()
-        if path is True:
+        # don't go to the next picture if we've yet to show one
+        if self._first is True: shift = 0
+        else: shift = 1
+
+        status = self.model.AddIndex(shift)
+        
+        if status == None:
             util.debugLog("need to wait more for another slide",2)
             self.view.UpdateStatus("Waiting for next image to download...")
-        elif path == None:
+        elif status == False:
             util.debugLog("no more slides")
             self.view.UpdateStatus("Slideshow finished.")
             return
         else:
+            util.debugLog("showing current slide",2)
+            path = self.model.CurrentImagePath()
+            self._first = False
             self.view.UpdateStatus("Playing slideshow...")
             self.view.ShowImage(path)
+
         
         # Init timer to call again in a bit
         if not blockTimer: self.StartTimer()
@@ -80,7 +90,7 @@ class SlideshowPresenter(object):
     def CleanupSlideshow(self):
         self.model.Stop()
         
-    def StartTimer(self, waitSecs=5):
+    def StartTimer(self, waitSecs=1):
         """
         Initializes a Timer to show the next slide in the queue after a few
         seconds.
