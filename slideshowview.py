@@ -19,6 +19,7 @@
 
 import util
 import wx
+import imaging
 
 class SlideshowView(wx.Frame):
     """
@@ -27,11 +28,9 @@ class SlideshowView(wx.Frame):
     def __init__(self):
         self.app = wx.App(0)
         wx.Frame.__init__(self, None, -1, "fsshow", 
-                          size=(800,600), style=(wx.DEFAULT_FRAME_STYLE|wx.MAXIMIZE))
+                          size=(800,600), style=(wx.DEFAULT_FRAME_STYLE))#|wx.MAXIMIZE))
         
-        self.SetBackgroundColour("lightgray")
-        
-        #self.CenterOnScreen()
+        self.SetBackgroundColour("black")
         
         self.CreateStatusBar()
         
@@ -70,11 +69,13 @@ class SlideshowView(wx.Frame):
     def ShowImage(self, imagePath):
         util.debugLog("slideshowview.ShowImage()")
         
-        self.DestroyBmp()
+        # resize the image
+        fitted = imaging.FitImage(imagePath)
+        imagePath = fitted.DownsizeFit(self._window.GetSize())
         
         image = wx.Image(imagePath, wx.BITMAP_TYPE_JPEG)
-        
         bmp = wx.BitmapFromImage(image)
+        self.DestroyBmp()
         self._staticBmp = wx.StaticBitmap(self._window, wx.ID_ANY, bmp,
                                           wx.Point(0,0),
                                           wx.Size(image.GetWidth(),
