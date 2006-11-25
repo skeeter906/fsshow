@@ -52,10 +52,12 @@ class SlideshowPresenter(object):
         self._SetTimer()
     
     def _ModelSearch(self):
+        self.view.UpdateStatus("Searching for photos...")
         self.model.SearchParam("email", "m2@innerlogic.org")
         self.model.Find()
         
     def _ModelStart(self):
+        self.view.UpdateStatus("Downloading photos...")
         t = threading.Thread(target=self.model.Start)
         t.start()
     
