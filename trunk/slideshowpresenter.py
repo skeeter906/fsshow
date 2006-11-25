@@ -62,10 +62,9 @@ class SlideshowPresenter(object):
         t = threading.Thread(target=self.model.Start)
         t.start()
     
-    def ShowNextSlide(self, blockTimer=False):
+    def ShiftSlide(self, shift=1, blockTimer=False):
         # don't go to the next picture if we've yet to show one
         if self._first is True: shift = 0
-        else: shift = 1
 
         status = self.model.AddIndex(shift)
         
