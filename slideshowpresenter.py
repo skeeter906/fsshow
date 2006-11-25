@@ -32,7 +32,7 @@ class SlideshowPresenter(object):
         self.interactor = interactor
         interactor.Install(self, view)
         self._isListening = True
-        self._initView()
+        #self._initView()
         view.Start()
         
     def _initView(self):
