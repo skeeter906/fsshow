@@ -74,7 +74,7 @@ class SlideshowPresenter(object):
         # Init timer to call again in a bit
         if not blockTimer: self._SetTimer()
     
-    def StopSlideshow(self):
+    def CleanupSlideshow(self):
         self.model.Stop()
         
     def _SetTimer(self, waitSecs=5):

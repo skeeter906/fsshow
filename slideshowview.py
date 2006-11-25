@@ -53,6 +53,8 @@ class SlideshowView(wx.Frame):
     
     def UpdateStatus(self, text):
         self._statusBar.SetStatusText(text)
+        if text: self.SetTitle("fsshow - " + text)
+        else: self.SetTitle(fsshow)
         
     def _OnCloseFrame(self, evt):
         """
