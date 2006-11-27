@@ -36,6 +36,9 @@ class SlideshowView(wx.Frame):
         
         # Build the File menu
         filemenu = wx.Menu()
+        item = filemenu.Append(-1, "&About\tAlt-A", "About")
+        self.app.Bind(wx.EVT_MENU, self._OnAbout, item)
+        filemenu.AppendSeparator()
         self.exitLink = filemenu.Append(-1, "E&xit\tAlt-X", "Exit")
         menuBar.Append(filemenu, "&File")
 
@@ -69,7 +72,15 @@ class SlideshowView(wx.Frame):
         if hasattr(self, "_window") and hasattr(self._window, "ShutdownDemo"):
             self._window.ShutdownDemo()
         evt.Skip()
-        
+    
+    def _OnAbout(self, evt):
+        d = wx.MessageDialog(self, "A simple editor"
+                             " in wxPython",
+                             "About Sample Editor",
+                             wx.OK)
+        d.ShowModal()
+        d.Destroy()        
+    
     def Start(self):
         '''
         Upon start we just show the frame and enter the MainLoop
