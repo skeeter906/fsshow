@@ -49,7 +49,17 @@ class FitImage(object):
         
         return self.Resize((newX,newY))
 
+def GetCenterFromTopLeft(canvasXY, imageXY):
+    canvasX,canvasY = canvasXY
+    imageX,imageY = imageXY
+    
+    x = int(round((canvasX - imageX) / 2))
+    y = int(round((canvasY - imageY) / 2))
+    
+    return (x,y)
+
 if __name__ == "__main__":
     fitted = FitImage("1.jpg")
     print fitted.DownsizeFit((800,600))
+    print GetCenterFromTopLeft((800,600), (790, 592))
     
