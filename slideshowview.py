@@ -100,10 +100,13 @@ class SlideshowView(wx.Frame):
         imagePath = fitted.DownsizeFit(self._window.GetSize())
         
         image = wx.Image(imagePath, wx.BITMAP_TYPE_JPEG)
+        
+        x,y = imaging.GetCenterFromTopLeft(self._window.GetSize(), image.GetSize())
+                
         bmp = wx.BitmapFromImage(image)
         self.DestroyBmp()
         self._staticBmp = wx.StaticBitmap(self._window, wx.ID_ANY, bmp,
-                                          wx.Point(0,0),
+                                          wx.Point(x,y),
                                           wx.Size(image.GetWidth(),
                                                   image.GetHeight()))
 
