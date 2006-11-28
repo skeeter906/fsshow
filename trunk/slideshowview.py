@@ -47,6 +47,7 @@ class SlideshowView(wx.Frame):
         self.startSlideshowLink = slidemenu.Append(-1, "S&tart Slideshow\tCtrl-S", "Start Slideshow")
         self.nextSlideLink = slidemenu.Append(-1, "N&ext\tRight", "Next Image")
         self.previousSlideLink = slidemenu.Append(-1, "P&revious\tLeft", "Previous Image")
+        self.fullscreenLink = slidemenu.Append(-1, "F&ull Screen\tF11", "Toggle Full Screen")
         menuBar.Append(slidemenu, "&Slideshow")
         
         # Set the menus
@@ -80,6 +81,11 @@ class SlideshowView(wx.Frame):
                              wx.OK)
         d.ShowModal()
         d.Destroy()        
+    
+    def OnFullscreen(self, evt):
+        if not self.IsFullScreen(): show = True
+        else: show = False
+        self.ShowFullScreen(show, wx.FULLSCREEN_ALL)
     
     def Start(self):
         '''

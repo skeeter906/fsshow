@@ -30,7 +30,8 @@ class SlideshowInteractor(object):
         view.app.Bind(wx.EVT_MENU, self._OnStartSlideshow, view.startSlideshowLink)
         view.app.Bind(wx.EVT_MENU, self._OnNextSlide, view.nextSlideLink)
         view.app.Bind(wx.EVT_MENU, self._OnPreviousSlide, view.previousSlideLink)
-        view.app.Bind(wx.EVT_MENU, self._OnExitApp, view.exitLink)    
+        view.app.Bind(wx.EVT_MENU, self._OnExitApp, view.exitLink)
+        view.app.Bind(wx.EVT_MENU, view.OnFullscreen, view.fullscreenLink)   
         view.app.Bind(wx.EVT_CHAR, self._OnKey)
 
     def _OnStartSlideshow(self, evt):
@@ -88,7 +89,8 @@ class SlideshowInteractor(object):
         elif evt.GetKeyCode() == wx.WXK_SPACE:
             util.debugLog("wx.WXK_SPACE",2)
             self.ToggleTimer()
-        
+        elif evt.GetKeyCode() == wx.WXK_F11:
+            self.view.OnFullscreen(None)
         
         
     
