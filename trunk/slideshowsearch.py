@@ -46,13 +46,13 @@ class SlideshowSearchDialog(wx.Dialog):
 
         box = wx.BoxSizer(wx.HORIZONTAL)
 
-        label = wx.StaticText(self, -1, "Field #1:")
+        label = wx.StaticText(self, -1, "Flickr Email:")
         label.SetHelpText("This is the help text for the label")
         box.Add(label, 0, wx.ALIGN_CENTRE|wx.ALL, 5)
 
-        text = wx.TextCtrl(self, -1, "", size=(80,-1))
-        text.SetHelpText("Here's some help text for field #1")
-        box.Add(text, 1, wx.ALIGN_CENTRE|wx.ALL, 5)
+        self.text1 = wx.TextCtrl(self, -1, "m2@innerlogic.org", size=(200,-1))
+        self.text1.SetHelpText("Here's some help text for field #1")
+        box.Add(self.text1, 1, wx.ALIGN_CENTRE|wx.ALL, 5)
 
         sizer.Add(box, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
@@ -62,9 +62,9 @@ class SlideshowSearchDialog(wx.Dialog):
         label.SetHelpText("This is the help text for the label")
         box.Add(label, 0, wx.ALIGN_CENTRE|wx.ALL, 5)
 
-        text = wx.TextCtrl(self, -1, "", size=(80,-1))
-        text.SetHelpText("Here's some help text for field #2")
-        box.Add(text, 1, wx.ALIGN_CENTRE|wx.ALL, 5)
+        self.text2 = wx.TextCtrl(self, -1, "", size=(80,-1))
+        self.text2.SetHelpText("Here's some help text for field #2")
+        box.Add(self.text2, 1, wx.ALIGN_CENTRE|wx.ALL, 5)
 
         sizer.Add(box, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
@@ -92,17 +92,17 @@ class SlideshowSearchDialog(wx.Dialog):
         self.SetSizer(sizer)
         sizer.Fit(self)
 
-
 if __name__ == "__main__":
     import slideshowview, util
     view = slideshowview.SlideshowView()
-    dlg = SlideshowSearchDialog(view, -1, "This is a Dialog", size=(350, 200),
-        #style = wxCAPTION | wxSYSTEM_MENU | wxTHICK_FRAME
+    dlg = SlideshowSearchDialog(view, -1, "This is a Dialog", size=(470, 200),
+        #style = wx.CAPTION | wx.SYSTEM_MENU | wx.THICK_FRAME)
         style = wx.DEFAULT_DIALOG_STYLE)
     dlg.CenterOnScreen()
 
     # this does not return until the dialog is closed.
     val = dlg.ShowModal()
+    print dlg.text1.GetValue()
     if val == wx.ID_OK:
         util.debugLog("You pressed OK\n")
     else:
