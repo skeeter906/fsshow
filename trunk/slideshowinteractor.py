@@ -25,6 +25,9 @@ class SlideshowInteractor(object):
     '''
     This class translates the low level events into the "higher level language" of the presenter
     '''
+    def __init__(self):
+        self.email = ''
+        
     def Install(self, presenter, view):
         self.presenter = presenter
         self.view = view
@@ -40,16 +43,17 @@ class SlideshowInteractor(object):
         Handles the starting of the slideshow after clicking on the menu option.
         """
         util.debugLog("SlideshowInteractor._OnStartSlideshow()")
-        dlg = slideshowsearch.SlideshowSearchDialog(self.view, -1, "This is a Dialog", size=(350, 200),
-                         #style = wxCAPTION | wxSYSTEM_MENU | wxTHICK_FRAME
-                         style = wx.DEFAULT_DIALOG_STYLE)
+        dlg = slideshowsearch.SlideshowSearchDialog(self.view, -1,
+                                                    "This is a Dialog",
+                                                    size=(350, 200),
+                                                    style=wx.DEFAULT_DIALOG_STYLE)
         dlg.CenterOnScreen()
 
         # this does not return until the dialog is closed.
         val = dlg.ShowModal()
-    
         if val == wx.ID_OK:
             util.debugLog("You pressed OK\n")
+            self.email = dlg.GetEmail()
             self.presenter.StartSlideshow()
         else:
             util.debugLog("You pressed Cancel\n")

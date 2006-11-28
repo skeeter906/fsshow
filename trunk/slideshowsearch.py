@@ -40,9 +40,9 @@ class SlideshowSearchDialog(wx.Dialog):
         # contents
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-        label = wx.StaticText(self, -1, "This is a wx.Dialog")
-        label.SetHelpText("This is the help text for the label")
-        sizer.Add(label, 0, wx.ALIGN_CENTRE|wx.ALL, 5)
+        #label = wx.StaticText(self, -1, "This is a wx.Dialog")
+        #label.SetHelpText("This is the help text for the label")
+        #sizer.Add(label, 0, wx.ALIGN_CENTRE|wx.ALL, 5)
 
         box = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -50,26 +50,26 @@ class SlideshowSearchDialog(wx.Dialog):
         label.SetHelpText("This is the help text for the label")
         box.Add(label, 0, wx.ALIGN_CENTRE|wx.ALL, 5)
 
-        self.text1 = wx.TextCtrl(self, -1, "m2@innerlogic.org", size=(200,-1))
-        self.text1.SetHelpText("Here's some help text for field #1")
-        box.Add(self.text1, 1, wx.ALIGN_CENTRE|wx.ALL, 5)
+        self._email = wx.TextCtrl(self, -1, "m2@innerlogic.org", size=(200,-1))
+        self._email.SetHelpText("Here's some help text for field #1")
+        box.Add(self._email, 1, wx.ALIGN_CENTRE|wx.ALL, 5)
 
         sizer.Add(box, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
-
-        box = wx.BoxSizer(wx.HORIZONTAL)
-
-        label = wx.StaticText(self, -1, "Field #2:")
-        label.SetHelpText("This is the help text for the label")
-        box.Add(label, 0, wx.ALIGN_CENTRE|wx.ALL, 5)
-
-        self.text2 = wx.TextCtrl(self, -1, "", size=(80,-1))
-        self.text2.SetHelpText("Here's some help text for field #2")
-        box.Add(self.text2, 1, wx.ALIGN_CENTRE|wx.ALL, 5)
-
-        sizer.Add(box, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
-
-        line = wx.StaticLine(self, -1, size=(20,-1), style=wx.LI_HORIZONTAL)
-        sizer.Add(line, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP, 5)
+        #
+        #box = wx.BoxSizer(wx.HORIZONTAL)
+        #
+        #label = wx.StaticText(self, -1, "Field #2:")
+        #label.SetHelpText("This is the help text for the label")
+        #box.Add(label, 0, wx.ALIGN_CENTRE|wx.ALL, 5)
+        #
+        #self.text2 = wx.TextCtrl(self, -1, "", size=(80,-1))
+        #self.text2.SetHelpText("Here's some help text for field #2")
+        #box.Add(self.text2, 1, wx.ALIGN_CENTRE|wx.ALL, 5)
+        #
+        #sizer.Add(box, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+        #
+        #line = wx.StaticLine(self, -1, size=(20,-1), style=wx.LI_HORIZONTAL)
+        #sizer.Add(line, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP, 5)
 
         btnsizer = wx.StdDialogButtonSizer()
         
@@ -87,10 +87,12 @@ class SlideshowSearchDialog(wx.Dialog):
         btnsizer.AddButton(btn)
         btnsizer.Realize()
 
-        sizer.Add(btnsizer, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+        sizer.Add(btnsizer, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5)
 
         self.SetSizer(sizer)
         sizer.Fit(self)
+    def GetEmail(self):
+        return self._email.GetValue()
 
 if __name__ == "__main__":
     import slideshowview, util
@@ -102,7 +104,7 @@ if __name__ == "__main__":
 
     # this does not return until the dialog is closed.
     val = dlg.ShowModal()
-    print dlg.text1.GetValue()
+    print dlg.GetEmail()
     if val == wx.ID_OK:
         util.debugLog("You pressed OK\n")
     else:
