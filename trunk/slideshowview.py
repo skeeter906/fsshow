@@ -75,9 +75,10 @@ class SlideshowView(wx.Frame):
         evt.Skip()
     
     def _OnAbout(self, evt):
-        d = wx.MessageDialog(self, "A simple editor"
-                             " in wxPython",
-                             "About Sample Editor",
+        d = wx.MessageDialog(self, "fsshow\n"
+                             "A full screen slideshow generator for Flickr.\n"
+                             "Copyright (c) 2006 Mat Malone",
+                             "About fsshow",
                              wx.OK)
         d.ShowModal()
         d.Destroy()        
