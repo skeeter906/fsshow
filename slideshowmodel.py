@@ -45,14 +45,11 @@ class SlideshowModel(object):
         Processes the entered search parameters.
         """
         # init some of the searching things
+        self._PreStart()
         self._slides = []
-
         self.factory = FlickrSlideFactory()
-        
         newSlides = self.factory.Build(self._searchParams)
-        
         self._slides.extend(newSlides)
-        
         util.debugLog("Find(): retrieved " + str(len(self._slides)) + " slides")
 
     def FetchSlide(self):
@@ -136,7 +133,6 @@ class SlideshowModel(object):
         Kicks off the fetching of slide images. Continues to run until worker
         threads have finished.
         """
-        self._StartInit()
         THREAD_LIMIT = 5
         
         for k,slide in enumerate(self._slides):
@@ -167,7 +163,7 @@ class SlideshowModel(object):
         
         return True
 
-    def _StartInit(self):
+    def _PreStart(self):
         """
         Sets up some status and synchronization members at the start
         of each show.
@@ -304,7 +300,8 @@ if __name__ == "__main__":
     t.start()
 
     while True:
-        status = model.Next()
+        if count > 0: status = model.Next()
+        else: status = model.AddIndex(0)
         if status is None:
             time.sleep(1)
             continue
