@@ -31,16 +31,7 @@ class SlideshowModel(object):
     """
     def __init__(self):
         # Thread-insentive members
-        self._slides = []
         self._searchParams = {}
-        self._currentIndex = 0
-        
-        # Thread-sensitive members
-        self._imagePaths = []
-        self._lock = threading.Lock()
-        self._workerCounter = util.ThreadCounter()
-        
-        self._continue = True
 
     def SearchParam(self, key, value):
         """
@@ -53,6 +44,9 @@ class SlideshowModel(object):
         """
         Processes the entered search parameters.
         """
+        # init some of the searching things
+        self._slides = []
+
         self.factory = FlickrSlideFactory()
         
         newSlides = self.factory.Build(self._searchParams)
@@ -142,6 +136,7 @@ class SlideshowModel(object):
         Kicks off the fetching of slide images. Continues to run until worker
         threads have finished.
         """
+        self._StartInit()
         THREAD_LIMIT = 5
         
         for k,slide in enumerate(self._slides):
@@ -171,6 +166,19 @@ class SlideshowModel(object):
         util.debugLog("All threads have completed")
         
         return True
+
+    def _StartInit(self):
+        """
+        Sets up some status and synchronization members at the start
+        of each show.
+        """
+        self._continue = True
+        self._currentIndex = 0
+        self._imagePaths = []
+        
+        # Thread-sensitive members
+        self._lock = threading.Lock()
+        self._workerCounter = util.ThreadCounter()
     
     def Stop(self):
         self._continue = False

@@ -32,7 +32,6 @@ class SlideshowPresenter(object):
         self.interactor = interactor
         interactor.Install(self, view)
         self._isListening = True
-        self._first = True
         #self._initView()
         view.Start()
         
@@ -48,6 +47,7 @@ class SlideshowPresenter(object):
         """
         util.debugLog("SlideshowPresenter.StartSlideshow()")
         
+        self._first = True
         self._ModelSearch()
         self._ModelStart()
         self.StartTimer()
