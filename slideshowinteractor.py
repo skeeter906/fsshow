@@ -19,6 +19,7 @@
 
 import wx
 import util
+import slideshowsearch
 
 class SlideshowInteractor(object):
     '''
@@ -39,7 +40,21 @@ class SlideshowInteractor(object):
         Handles the starting of the slideshow after clicking on the menu option.
         """
         util.debugLog("SlideshowInteractor._OnStartSlideshow()")
-        self.presenter.StartSlideshow()
+        dlg = slideshowsearch.SlideshowSearchDialog(self.view, -1, "This is a Dialog", size=(350, 200),
+                         #style = wxCAPTION | wxSYSTEM_MENU | wxTHICK_FRAME
+                         style = wx.DEFAULT_DIALOG_STYLE)
+        dlg.CenterOnScreen()
+
+        # this does not return until the dialog is closed.
+        val = dlg.ShowModal()
+    
+        if val == wx.ID_OK:
+            util.debugLog("You pressed OK\n")
+            self.presenter.StartSlideshow()
+        else:
+            util.debugLog("You pressed Cancel\n")
+
+        dlg.Destroy()        
         
     def _OnNextSlide(self, evt):
         """
@@ -91,6 +106,8 @@ class SlideshowInteractor(object):
             self.ToggleTimer()
         elif evt.GetKeyCode() == wx.WXK_F11:
             self.view.OnFullscreen(None)
+        # Continue processing other keys
+        evt.Skip()
         
         
     
