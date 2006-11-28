@@ -200,13 +200,11 @@ class FlickrSlideFactory(SlideFactory):
         super(FlickrSlideFactory, self).__init__()
     
     def BuildProcess(self):
-        me = flickr.people_findByEmail("m2@innerlogic.org")
         if "email" in self._searchParams: self.__ProcessEmail()
 
-
     def __ProcessEmail(self):
-        util.debugLog("processing email")
-        user = flickr.people_findByEmail("m2@innerlogic.org")
+        util.debugLog("processing email " + self._searchParams["email"])
+        user = flickr.people_findByEmail(self._searchParams["email"])
         self.__ProcessEmailPages(user)
         
     def __ProcessEmailPages(self, user):

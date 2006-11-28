@@ -54,7 +54,7 @@ class SlideshowPresenter(object):
     
     def _ModelSearch(self):
         self.view.UpdateStatus("Searching for photos...")
-        self.model.SearchParam("email", "m2@innerlogic.org")
+        self.model.SearchParam("email", self.interactor.email)
         self.model.Find()
         
     def _ModelStart(self):
