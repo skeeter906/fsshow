@@ -65,6 +65,7 @@ class SlideshowInteractor(object):
         Handles event to trigger the next slide.
         """
         util.debugLog("SlideshowInteractor._OnNextSlide()")
+        self.StopTimer()
         self.presenter.ShiftSlide(blockTimer=True)
             
     def _OnPreviousSlide(self, evt):
@@ -72,6 +73,7 @@ class SlideshowInteractor(object):
         Handles event to trigger the previous slide.
         """
         util.debugLog("SlideshowInteractor._OnPreviousSlide()")
+        self.StopTimer()
         self.presenter.ShiftSlide(shift=-1, blockTimer=True)
             
     def StartTimer(self, waitSecs):
@@ -99,12 +101,10 @@ class SlideshowInteractor(object):
     def _OnKey(self, evt):
         if evt.GetKeyCode() == wx.WXK_RIGHT:
             util.debugLog("wx.WXK_RIGHT",2)
-            self.presenter.StopTimer()
-            self.presenter.ShiftSlide(blockTimer=True)
+            self._OnNextSlide(None)
         elif evt.GetKeyCode() == wx.WXK_LEFT:
             util.debugLog("wx.WXK_LEFT",2)
-            self.presenter.StopTimer()
-            self.presenter.ShiftSlide(shift=-1,blockTimer=True)
+            self._OnPreviousSlide(None)
         elif evt.GetKeyCode() == wx.WXK_SPACE:
             util.debugLog("wx.WXK_SPACE",2)
             self.ToggleTimer()
