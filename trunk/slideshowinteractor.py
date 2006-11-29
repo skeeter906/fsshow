@@ -111,7 +111,7 @@ class SlideshowInteractor(object):
         elif evt.GetKeyCode() == wx.WXK_F11:
             self.view.OnFullscreen(None)
         # Continue processing other keys
-        evt.Skip()
+        else: evt.Skip()
         
         
     
