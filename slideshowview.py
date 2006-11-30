@@ -20,6 +20,7 @@
 import util
 import wx
 import imaging
+import os
 
 class SlideshowView(wx.Frame):
     """
@@ -104,9 +105,10 @@ class SlideshowView(wx.Frame):
         
         # resize the image
         fitted = imaging.FitImage(imagePath)
-        imagePath = fitted.DownsizeFit(self._window.GetSize())
+        newImagePath = os.path.join("cache", "fit_" + os.path.basename(imagePath))
+        imagePath = fitted.DownsizeFit(self._window.GetSize(), newImagePath)
         
-        image = wx.Image(imagePath, wx.BITMAP_TYPE_JPEG)
+        image = wx.Image(newImagePath, wx.BITMAP_TYPE_JPEG)
         
         x,y = imaging.GetCenterFromTopLeft(self._window.GetSize(), image.GetSize())
                 
@@ -117,6 +119,11 @@ class SlideshowView(wx.Frame):
                                           wx.Size(image.GetWidth(),
                                                   image.GetHeight()))
 
+        try:
+            os.unlink(newImagePath)
+        except IOError, (errno, strerror):
+            print "I/O error(%s): %s" % (errno, strerror)
+        
         util.debugLog("ShowImage() done",2)
         
     def DestroyBmp(self):
