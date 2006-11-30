@@ -184,7 +184,7 @@ class SlideshowModel(object):
     
     def Cleanup(self):
         for path in self._imagePaths:
-            util.debugLog("Cleanup: deleting " + path)
+            util.debugLog("Cleanup: deleting " + path, 2)
             try:
                 os.unlink(path)
             except IOError: pass
