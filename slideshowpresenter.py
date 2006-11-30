@@ -31,6 +31,7 @@ class SlideshowPresenter(object):
         self.view = view
         self.interactor = interactor
         interactor.Install(self, view)
+        self._isRunning = False
         self._isListening = True
         #self._initView()
         view.Start()
@@ -61,8 +62,12 @@ class SlideshowPresenter(object):
         self.view.UpdateStatus("Downloading photos...")
         t = threading.Thread(target=self.model.Start)
         t.start()
+        self._isRunning = True
     
     def ShiftSlide(self, shift=1, blockTimer=False):
+        # check see if we were even started
+        if not self._isRunning: return False
+        
         # don't go to the next picture if we've yet to show one
         if self._first is True: shift = 0
 
@@ -90,6 +95,7 @@ class SlideshowPresenter(object):
     
     def CleanupSlideshow(self):
         self.model.Stop()
+        self.model.Cleanup()
         
     def StartTimer(self, waitSecs=1):
         """
