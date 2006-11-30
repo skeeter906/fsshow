@@ -83,24 +83,25 @@ class SlideshowPresenter(object):
         status = self.model.AddIndex(shift)
         
         if status == None:
-            util.debugLog("need to wait more for another slide",2)
+            util.debugLog("need to wait more for another slide",1)
             self.view.UpdateStatus("Waiting for next image to download...")
+            # Init timer to call again in a bit
+            if not blockTimer: self.StartTimer(.5)
         elif status == False:
             util.debugLog("no more slides")
             self.view.UpdateStatus("Slideshow finished")
-            return
         else:
             self.view.UpdateStatus("Drawing Image...")
             util.debugLog("showing current slide",2)
             path = self.model.CurrentImagePath()
             self._first = False
             self.view.ShowImage(path)
-
             if blockTimer: self.view.UpdateStatus("Ready")
             else: self.view.UpdateStatus("Playing slideshow...")
+            # Init timer to call again in a while
+            if not blockTimer: self.StartTimer(3)
+
             
-        # Init timer to call again in a bit
-        if not blockTimer: self.StartTimer()
     
     def CleanupSlideshow(self):
         self.model.Stop()
