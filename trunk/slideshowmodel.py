@@ -52,7 +52,10 @@ class SlideshowModel(object):
         newSlides = self.factory.Build(self._searchParams)
         self._slides.extend(newSlides)
         util.debugLog("Find(): retrieved " + str(len(self._slides)) + " slides")
-
+        
+        # reset search params
+        self._searchParams = {}
+        
     def FetchSlide(self):
         if self._currentIndex >= len(self._slides): return None
         
