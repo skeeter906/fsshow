@@ -67,6 +67,9 @@ class SlideshowModel(object):
         
         path = slide.GetLocalPath()
         
+        # make sure the model wasn't Stop()'d
+        if not self._continue: return
+        
         self._lock.acquire()
         util.debugLog(outPath + " acquired lock",2)
         self._imagePaths.append(path)
@@ -144,7 +147,7 @@ class SlideshowModel(object):
             
             util.debugLog("creating new thread")
             t = threading.Thread(target=self.FetchImage,
-                                 kwargs={"slide":slide, "outPath":str(k) + ".jpg"})
+                                 kwargs={"slide":slide, "outPath":os.path.join("cache", str(k) + ".jpg")})
             id = t.getName()
             
             util.debugLog("threadid: " + str(id),2)
@@ -178,6 +181,13 @@ class SlideshowModel(object):
     
     def Stop(self):
         self._continue = False
+    
+    def Cleanup(self):
+        for path in self._imagePaths:
+            util.debugLog("Cleanup: deleting " + path)
+            try:
+                os.unlink(path)
+            except IOError: pass
 
 class SlideFactory(object):
     """
@@ -289,6 +299,7 @@ class SlideshowModelException(Exception): pass
 class SlideshowModelDone(SlideshowModelException): pass
 
 if __name__ == "__main__":
+    util.DEBUG_LEVEL = 10
     count = 0
     model = SlideshowModel()
     model.SearchParam("email", "m2@innerlogic.org")
@@ -309,4 +320,7 @@ if __name__ == "__main__":
         print str(count), ": ", path
         count += 1
     print "slideshow finished"
+    model.Stop()
+    model.Cleanup()
+    print "done with Cleanup"
     
