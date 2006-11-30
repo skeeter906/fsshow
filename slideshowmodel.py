@@ -183,11 +183,13 @@ class SlideshowModel(object):
         self._continue = False
     
     def Cleanup(self):
-        for path in self._imagePaths:
-            util.debugLog("Cleanup: deleting " + path, 2)
-            try:
-                os.unlink(path)
-            except IOError: pass
+        # cleanup tmp files
+        if hasattr(self, "_imagePaths"):
+            for path in self._imagePaths:
+                util.debugLog("Cleanup: deleting " + path, 2)
+                try:
+                    os.unlink(path)
+                except IOError: pass
 
 class SlideFactory(object):
     """
