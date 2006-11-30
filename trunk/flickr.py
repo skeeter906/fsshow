@@ -6,6 +6,8 @@ THIS SOFTWARE IS SUPPLIED WITHOUT WARRANTY OF ANY KIND, AND MAY BE
 COPIED, MODIFIED OR DISTRIBUTED IN ANY WAY, AS LONG AS THIS NOTICE
 AND ACKNOWLEDGEMENT OF AUTHORSHIP REMAIN.
 
+Updated by Mat Malone for fsshow, Nov. 2006
+
 This TODO list may not include recent API changes.
 TODO (see TODO comments too):
 * flickr.blogs.*
@@ -601,6 +603,14 @@ def people_findByUsername(username):
     user = User(data.rsp.user.id, username=data.rsp.user.username.text)
     return user
 
+# new function by Mat Malone circa 2006-11-29
+def people_findByURL(url):
+    """Returns User object."""
+    method = 'flickr.urls.lookupUser'
+    data = _doget(method, url=url)
+    user = User(data.rsp.user.id, username=data.rsp.user.username.text)
+    return user
+
 #XXX: Should probably be in User as a list User.public
 def people_getPublicPhotos(user_id, per_page='', page=''):
     """Returns list of Photo objects."""
@@ -852,3 +862,5 @@ def uniq(alist):    # Fastest without order preserving
 
 if __name__ == '__main__':
     print test_echo()
+    print people_findByURL("http://www.flickr.com/photos/innerlogic/")
+    print people_findByUsername("test")
