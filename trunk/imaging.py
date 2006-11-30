@@ -28,19 +28,18 @@ class FitImage(object):
         self._imagePath = imagePath
         self._im = Image.open(imagePath)
     
-    def Resize(self, xy):
+    def Resize(self, xy, outPath):
         im = self._im.resize(xy, Image.ANTIALIAS)
-        newPath = "fitted_" + self._imagePath
-        im.save(newPath)
-        return newPath
+        im.save(outPath)
+        return outPath
     
-    def DownsizeFit(self, xy):
+    def DownsizeFit(self, xy, outPath):
         x,y = xy
         imX,imY = self._im.size
         
         if x >= imX and y >= imY:
-            shutil.copyfile(self._imagePath, "fitted_" + self._imagePath)
-            return "fitted_" + self._imagePath
+            shutil.copyfile(self._imagePath, outPath)
+            return outPath
 
         xCoeff = float(x)/float(imX)
         yCoeff = float(y)/float(imY)
@@ -50,7 +49,7 @@ class FitImage(object):
         newX = int(imX*coeff)
         newY = int(imY*coeff)
         
-        return self.Resize((newX,newY))
+        return self.Resize((newX,newY), outPath)
 
 def GetCenterFromTopLeft(canvasXY, imageXY):
     canvasX,canvasY = canvasXY
@@ -62,7 +61,8 @@ def GetCenterFromTopLeft(canvasXY, imageXY):
     return (x,y)
 
 if __name__ == "__main__":
-    fitted = FitImage("1.jpg")
-    print fitted.DownsizeFit((800,600))
+    import os
+    fitted = FitImage(os.path.join("cache" , "0.jpg"))
+    print fitted.DownsizeFit((800,600), "imagingtest.jpg")
     print GetCenterFromTopLeft((800,600), (790, 592))
     
