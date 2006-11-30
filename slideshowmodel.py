@@ -211,18 +211,33 @@ class FlickrSlideFactory(SlideFactory):
     
     def BuildProcess(self):
         if "email" in self._searchParams: self._ProcessEmail()
-
+        elif "url" in self._searchParams: self._ProcessUrl()
+        elif "username" in self._searchParams: self._ProcessUsername()
+        
+    def _ProcessUrl(self):
+        util.debugLog("processing url " + self._searchParams["url"])
+        user = flickr.people_findByURL(self._searchParams["url"])
+        self._ProcessUserPages(user)        
+        
     def _ProcessEmail(self):
         util.debugLog("processing email " + self._searchParams["email"])
         user = flickr.people_findByEmail(self._searchParams["email"])
-        self._ProcessEmailPages(user)
+        self._ProcessUserPages(user)
         
-    def _ProcessEmailPages(self, user):
+    def _ProcessUsername(self):
+        util.debugLog("processing username " + self._searchParams["username"])
+        user = flickr.people_findByUsername(self._searchParams["username"])
+        self._ProcessUserPages(user)
+        
+    def _ProcessUserPages(self, user):
         PER_PAGE = 5
         page = 1
-
+        
         while True:
-            photos = flickr.favorites_getPublicList(user.id, PER_PAGE, page)
+            try:
+                photos = flickr.favorites_getPublicList(user.id, PER_PAGE, page)
+            except AttributeError:
+                raise SlideshowModelNoSlides("No slides found")
             slides = [FlickrSlide(slide) for slide in photos]
             self.photos.extend(slides)
             if len(photos) < PER_PAGE: break
@@ -297,12 +312,14 @@ class FlickrSlide(Slide):
 
 class SlideshowModelException(Exception): pass
 class SlideshowModelDone(SlideshowModelException): pass
+class SlideshowModelNoSlides(SlideshowModelException): pass
 
 if __name__ == "__main__":
     util.DEBUG_LEVEL = 10
     count = 0
     model = SlideshowModel()
-    model.SearchParam("email", "m2@innerlogic.org")
+    #model.SearchParam("email", "m2@innerlogic.org")
+    model.SearchParam("username", "test")
     model.Find()
     
     t = threading.Thread(target=model.Start)

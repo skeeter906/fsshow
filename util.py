@@ -24,6 +24,11 @@ import threading
 def debugLog(msg, level=1):
     if level <= DEBUG_LEVEL: print "debug: " + msg
 
+def getSearchParamType(s):
+    if s.lower()[0:7] == "http://": return "url"
+    elif s.find("@", 1, len(s)-1) >= 0: return "email"
+    else: return "username"
+
 def info(object, spacing=10, collapse=1):
     """Print methods and doc strings.
     
@@ -75,3 +80,4 @@ if __name__ == "__main__":
     tc.Down()
     print "tc = ", tc.Get()
     
+    print getSearchParamType("http://www.asdf")

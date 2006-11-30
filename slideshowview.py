@@ -129,7 +129,11 @@ class SlideshowView(wx.Frame):
     def DestroyBmp(self):
         util.debugLog("slideshowview.DestroyBmp()")
         if hasattr(self, "_staticBmp"): self._staticBmp.Destroy()
-        
+    
+    def Popup(self, msg, title="Attention"):
+        d = wx.MessageDialog(self, msg, title, wx.OK)
+        d.ShowModal()
+        d.Destroy()                
 
 if __name__ == "__main__":
     view = SlideshowView()

@@ -46,13 +46,13 @@ class SlideshowSearchDialog(wx.Dialog):
 
         box = wx.BoxSizer(wx.HORIZONTAL)
 
-        label = wx.StaticText(self, -1, "Flickr Email:")
+        label = wx.StaticText(self, -1, "Flickr email, username\nor photo stream link:")
         label.SetHelpText("This is the help text for the label")
         box.Add(label, 0, wx.ALIGN_CENTRE|wx.ALL, 5)
 
-        self._email = wx.TextCtrl(self, -1, "m2@innerlogic.org", size=(200,-1))
-        self._email.SetHelpText("Here's some help text for field #1")
-        box.Add(self._email, 1, wx.ALIGN_CENTRE|wx.ALL, 5)
+        self._searchString = wx.TextCtrl(self, -1, "m2@innerlogic.org", size=(300,-1))
+        self._searchString.SetHelpText("Here's some help text for field #1")
+        box.Add(self._searchString, 1, wx.ALIGN_CENTRE|wx.ALL, 5)
 
         sizer.Add(box, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
         #
@@ -91,8 +91,8 @@ class SlideshowSearchDialog(wx.Dialog):
 
         self.SetSizer(sizer)
         sizer.Fit(self)
-    def GetEmail(self):
-        return self._email.GetValue()
+    def GetSearchString(self):
+        return self._searchString.GetValue()
 
 if __name__ == "__main__":
     import slideshowview, util
@@ -104,7 +104,7 @@ if __name__ == "__main__":
 
     # this does not return until the dialog is closed.
     val = dlg.ShowModal()
-    print dlg.GetEmail()
+    print dlg.GetSearchString()
     if val == wx.ID_OK:
         util.debugLog("You pressed OK\n")
     else:
