@@ -99,7 +99,7 @@ class SlideshowPresenter(object):
             if blockTimer: self.view.UpdateStatus("Ready")
             else: self.view.UpdateStatus("Playing slideshow...")
             # Init timer to call again in a while
-            if not blockTimer: self.StartTimer(3)
+            if not blockTimer: self.StartTimer()
 
             
     
