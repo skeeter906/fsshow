@@ -26,7 +26,7 @@ class SlideshowInteractor(object):
     This class translates the low level events into the "higher level language" of the presenter
     '''
     def __init__(self):
-        self.email = ''
+        self.searchString = ''
         
     def Install(self, presenter, view):
         self.presenter = presenter
@@ -53,7 +53,7 @@ class SlideshowInteractor(object):
         val = dlg.ShowModal()
         if val == wx.ID_OK:
             util.debugLog("You pressed OK\n")
-            self.email = dlg.GetEmail()
+            self.searchString = dlg.GetSearchString()
             self.presenter.StartSlideshow()
         else:
             util.debugLog("You pressed Cancel\n")

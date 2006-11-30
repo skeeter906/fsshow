@@ -20,6 +20,7 @@
 import util
 import threading
 import time
+import slideshowmodel
 
 class SlideshowPresenter(object):
     """
@@ -49,13 +50,20 @@ class SlideshowPresenter(object):
         util.debugLog("SlideshowPresenter.StartSlideshow()")
         
         self._first = True
-        self._ModelSearch()
+        try: 
+            self._ModelSearch()
+        except slideshowmodel.SlideshowModelNoSlides, inst:
+            msg = str(inst)
+            util.debugLog(msg)
+            self.view.Popup(msg)
+            return False
         self._ModelStart()
         self.StartTimer()
     
     def _ModelSearch(self):
         self.view.UpdateStatus("Searching for photos...")
-        self.model.SearchParam("email", self.interactor.email)
+        self.model.SearchParam(util.getSearchParamType(self.interactor.searchString),
+                               self.interactor.searchString)
         self.model.Find()
         
     def _ModelStart(self):
