@@ -71,10 +71,10 @@ class SlideshowModel(object):
         
         path = slide.GetLocalPath()
         
+        self._lock.acquire()
         # make sure the model wasn't Stop()'d
         if not self._continue: return
         
-        self._lock.acquire()
         util.debugLog(outPath + " acquired lock",2)
         self._imagePaths.append(path)
         util.debugLog(outPath + " releasing lock",2)
