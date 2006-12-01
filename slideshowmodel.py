@@ -69,6 +69,7 @@ class SlideshowModel(object):
         if not self._continue:
             util.debugLog(outPath + " releasing lock",2)
             self._lock.release()
+            os.unlink(path)
             self._workerCounter.Down()
             return
         self._imagePaths.append(path)
