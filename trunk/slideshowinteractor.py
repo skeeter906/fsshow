@@ -87,7 +87,6 @@ class SlideshowInteractor(object):
         
     def StopTimer(self):
         if hasattr(self, "_timer"): self._timer.Stop()
-        self.presenter.CleanupSlideshow()
         util.debugLog("stopping timer",2)
         
     def _OnExitApp(self, evt):
