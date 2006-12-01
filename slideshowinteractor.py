@@ -38,6 +38,7 @@ class SlideshowInteractor(object):
         view.app.Bind(wx.EVT_MENU, self._OnExitApp, view.exitLink)
         view.app.Bind(wx.EVT_MENU, view.OnFullscreen, view.fullscreenLink)   
         view.app.Bind(wx.EVT_CHAR, self._OnKey)
+        view.Bind(wx.EVT_CLOSE, self._Shutdown)
 
     def _OnStartSlideshow(self, evt):
         """
@@ -93,9 +94,14 @@ class SlideshowInteractor(object):
     def _OnExitApp(self, evt):
         """
         Handles the exit event.
-        """        
-        self.presenter.CleanupSlideshow()
+        """
+        util.debugLog("OnExitApp()")
         self.view.Close(True)
+    
+    def _Shutdown(self, evt):
+        util.debugLog("Shutdown()")
+        self.presenter.CleanupSlideshow()
+        if evt: evt.Skip()
 
     def ToggleTimer(self):
         """
