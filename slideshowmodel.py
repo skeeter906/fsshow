@@ -34,6 +34,7 @@ class SlideshowModel(object):
         # Thread-insentive members
         self._searchParams = {}
         self._isRunning = False
+        self._shortWaitSecs = .5
 
     def SearchParam(self, key, value):
         """
@@ -153,7 +154,7 @@ class SlideshowModel(object):
             if not self._continue: break
             # limit number of threads
             while self._workerCounter.Get() >= THREAD_LIMIT:
-                time.sleep(.5)
+                time.sleep(self._shortWaitSecs)
             
             util.debugLog("creating new thread")
             t = threading.Thread(target=self.FetchImage,
@@ -170,7 +171,7 @@ class SlideshowModel(object):
         while not self._workerCounter.WasTouched() or self._workerCounter.Get() > 0:
             util.debugLog("waiting for threads " + str(self._workerCounter.Get())
                           + " to finish")
-            time.sleep(.5)
+            time.sleep(self._shortWaitSecs)
             
         self._isRunning = False
         util.debugLog("All threads have completed")
@@ -187,7 +188,7 @@ class SlideshowModel(object):
             util.debugLog("waiting for "
                           + str(self._workerCounter.Get())
                           + " threads to finish before PreStart")
-            time.sleep(.5)
+            time.sleep(self._shortWaitSecs)
         self._continue = True
         self._currentIndex = 0
         self._imagePaths = []
