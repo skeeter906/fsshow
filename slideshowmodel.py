@@ -33,6 +33,7 @@ class SlideshowModel(object):
     def __init__(self):
         # Thread-insentive members
         self._searchParams = {}
+        self._isRunning = False
 
     def SearchParam(self, key, value):
         """
@@ -72,10 +73,14 @@ class SlideshowModel(object):
         path = slide.GetLocalPath()
         
         self._lock.acquire()
-        # make sure the model wasn't Stop()'d
-        if not self._continue: return
-        
         util.debugLog(outPath + " acquired lock",2)
+        # make sure the model wasn't Stop()'d
+        if not self._continue:
+            util.debugLog(outPath + " releasing lock",2)
+            self._lock.release()
+            self._workerCounter.Down()
+            return
+        
         self._imagePaths.append(path)
         util.debugLog(outPath + " releasing lock",2)
         self._lock.release()
@@ -141,13 +146,14 @@ class SlideshowModel(object):
         threads have finished.
         """
         THREAD_LIMIT = 5
+        self._isRunning = True
         
         for k,slide in enumerate(self._slides):
             # check to see if Stop() was called
             if not self._continue: break
             # limit number of threads
             while self._workerCounter.Get() >= THREAD_LIMIT:
-                time.sleep(1)
+                time.sleep(.5)
             
             util.debugLog("creating new thread")
             t = threading.Thread(target=self.FetchImage,
@@ -164,10 +170,10 @@ class SlideshowModel(object):
         while not self._workerCounter.WasTouched() or self._workerCounter.Get() > 0:
             util.debugLog("waiting for threads " + str(self._workerCounter.Get())
                           + " to finish")
-            time.sleep(1)
-        
+            time.sleep(.5)
+            
+        self._isRunning = False
         util.debugLog("All threads have completed")
-        
         return True
 
     def _PreStart(self):
@@ -175,6 +181,13 @@ class SlideshowModel(object):
         Sets up some status and synchronization members at the start
         of each show.
         """
+        while self.IsRunning():
+            # wait for previous slideshows to finish
+            self.Stop()
+            util.debugLog("waiting for "
+                          + str(self._workerCounter.Get())
+                          + " threads to finish before PreStart")
+            time.sleep(.5)
         self._continue = True
         self._currentIndex = 0
         self._imagePaths = []
@@ -194,7 +207,10 @@ class SlideshowModel(object):
                 try:
                     os.unlink(path)
                 except IOError: pass
-
+    
+    def IsRunning(self):
+        return self._isRunning
+    
 class SlideFactory(object):
     """
     Abstract factory base class for slides.
