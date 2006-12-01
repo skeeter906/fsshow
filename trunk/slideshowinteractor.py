@@ -50,7 +50,6 @@ class SlideshowInteractor(object):
                                                     size=(350, 200),
                                                     style=wx.DEFAULT_DIALOG_STYLE)
         dlg.CenterOnScreen()
-
         # this does not return until the dialog is closed.
         val = dlg.ShowModal()
         if val == wx.ID_OK:
@@ -59,7 +58,6 @@ class SlideshowInteractor(object):
             self.presenter.StartSlideshow()
         else:
             util.debugLog("You pressed Cancel\n")
-
         dlg.Destroy()        
         
     def _OnNextSlide(self, evt):
@@ -86,6 +84,9 @@ class SlideshowInteractor(object):
         self._timer = wx.FutureCall(waitSecs*1000, self.presenter.ShiftSlide)
         
     def StopTimer(self):
+        """
+        Stops the running timer.
+        """
         if hasattr(self, "_timer"): self._timer.Stop()
         util.debugLog("stopping timer",2)
         
@@ -97,6 +98,9 @@ class SlideshowInteractor(object):
         self.view.Close(True)
 
     def ToggleTimer(self):
+        """
+        Starts the timer if it's not running, or stops it if it is running.
+        """
         if hasattr(self, "_timer") and self._timer.IsRunning(): self.presenter.StopTimer()
         else: self.presenter.StartTimer()
 

@@ -54,25 +54,15 @@ class SlideshowModel(object):
         newSlides = self.factory.Build(self._searchParams)
         self._slides.extend(newSlides)
         util.debugLog("Find(): retrieved " + str(len(self._slides)) + " slides")
-        
         # reset search params
         self._searchParams = {}
         
-    def FetchSlide(self):
-        if self._currentIndex >= len(self._slides): return None
-        
-        slide = self._slides[self._currentIndex]
-        self._currentIndex += 1
-        return slide
-    
     def FetchImage(self, slide, outPath):
         """
         Retrieves an image from Flickr and stores it in the model.
         """
         slide.GetImage(outPath)
-        
         path = slide.GetLocalPath()
-        
         self._lock.acquire()
         util.debugLog(outPath + " acquired lock",2)
         # make sure the model wasn't Stop()'d
@@ -81,7 +71,6 @@ class SlideshowModel(object):
             self._lock.release()
             self._workerCounter.Down()
             return
-        
         self._imagePaths.append(path)
         util.debugLog(outPath + " releasing lock",2)
         self._lock.release()
@@ -103,7 +92,6 @@ class SlideshowModel(object):
         """
         self._lock.acquire()
         util.debugLog("AddIndex() acquired lock", 2)
-
         if self._currentIndex+n >= len(self._slides) or self._currentIndex+n < 0:
             # out of slides
             util.debugLog("out of slides")
@@ -117,10 +105,8 @@ class SlideshowModel(object):
             util.debugLog("found a slide",2)
             status = True
             self._currentIndex += n
-            
         util.debugLog("AddIndex() releasing lock", 2)
         self._lock.release()
-        
         return status
         
     def Next(self):
@@ -148,31 +134,25 @@ class SlideshowModel(object):
         """
         THREAD_LIMIT = 5
         self._isRunning = True
-        
         for k,slide in enumerate(self._slides):
             # check to see if Stop() was called
             if not self._continue: break
             # limit number of threads
             while self._workerCounter.Get() >= THREAD_LIMIT:
                 time.sleep(self._shortWaitSecs)
-            
             util.debugLog("creating new thread")
             t = threading.Thread(target=self.FetchImage,
                                  kwargs={"slide":slide, "outPath":os.path.join("cache", str(k) + ".jpg")})
             id = t.getName()
-            
             util.debugLog("threadid: " + str(id),2)
-            
             # increment the thread counter before we start
             self._workerCounter.Up()
-            
             t.start()
         
         while not self._workerCounter.WasTouched() or self._workerCounter.Get() > 0:
             util.debugLog("waiting for threads " + str(self._workerCounter.Get())
                           + " to finish")
             time.sleep(self._shortWaitSecs)
-            
         self._isRunning = False
         util.debugLog("All threads have completed")
         return True
@@ -192,7 +172,6 @@ class SlideshowModel(object):
         self._continue = True
         self._currentIndex = 0
         self._imagePaths = []
-        
         # Thread-sensitive members
         self._lock = threading.Lock()
         self._workerCounter = util.ThreadCounter()
@@ -210,6 +189,9 @@ class SlideshowModel(object):
                 except IOError: pass
     
     def IsRunning(self):
+        """
+        Returns true if the Start() loop is currently running.
+        """
         return self._isRunning
     
 class SlideFactory(object):
@@ -220,6 +202,9 @@ class SlideFactory(object):
         self.photos = []
     
     def Build(self, searchParams):
+        """
+        Processes the search parameters and returns the list of photos.
+        """
         self._searchParams = searchParams
         self.BuildProcess()
         
@@ -255,7 +240,6 @@ class FlickrSlideFactory(SlideFactory):
     def _ProcessUserPages(self, user):
         PER_PAGE = 5
         page = 1
-        
         while True:
             try:
                 photos = flickr.favorites_getPublicList(user.id, PER_PAGE, page)
@@ -302,7 +286,6 @@ class FlickrSlide(Slide):
             except flickr.FlickrError:
                 util.debugLog("Large size not found")
                 url = self._photo.getURL(size='Medium', urlType='source')
-        
         self._url = url
         return url
     
@@ -313,24 +296,22 @@ class FlickrSlide(Slide):
         Returns True on success.
         """
         self._localPath = outPath
-        
         # get the URL if it's not already saved
         if not hasattr(self, "_url"): self.GetUrl()
-        
         util.debugLog(self._localPath + " downloading image",2)
         data = urllib.urlopen(self._url).read()
-        
         try:
             fd = open(outPath, "wb")
             fd.write(data)
         finally:
             fd.close()
-        
         util.debugLog("Saved " + self._url + " to " + outPath)
-        
         return True
     
     def GetLocalPath(self):
+        """
+        Returns the path of the image on the local disk.
+        """
         return self._localPath
 
 class SlideshowModelException(Exception): pass
@@ -344,10 +325,8 @@ if __name__ == "__main__":
     #model.SearchParam("email", "m2@innerlogic.org")
     model.SearchParam("username", "test")
     model.Find()
-    
     t = threading.Thread(target=model.Start)
     t.start()
-
     while True:
         if count > 0: status = model.Next()
         else: status = model.AddIndex(0)
