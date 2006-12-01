@@ -31,11 +31,15 @@ class SlideshowView(wx.Frame):
         self.app = wx.App(0)
         wx.Frame.__init__(self, None, -1, "fsshow", 
                           size=(800,600), style=(wx.DEFAULT_FRAME_STYLE))#|wx.MAXIMIZE))
-        
         self._statusBar = self.CreateStatusBar()
-        
+        self._BuildMenus()
+        self.Bind(wx.EVT_CLOSE, self._OnCloseFrame)
+        self._window = wx.Panel(self, -1)
+        self._window.SetBackgroundColour("black")        
+        self._window.SetFocus()
+    
+    def _BuildMenus(self):
         menuBar = wx.MenuBar()
-        
         # Build the File menu
         filemenu = wx.Menu()
         item = filemenu.Append(-1, "&About\tAlt-A", "About")
@@ -43,7 +47,6 @@ class SlideshowView(wx.Frame):
         filemenu.AppendSeparator()
         self.exitLink = filemenu.Append(-1, "E&xit\tAlt-X", "Exit")
         menuBar.Append(filemenu, "&File")
-
         # Build the Slideshow menu
         slidemenu = wx.Menu()
         self.startSlideshowLink = slidemenu.Append(-1, "S&tart Slideshow\tCtrl-S", "Start Slideshow")
@@ -51,17 +54,8 @@ class SlideshowView(wx.Frame):
         self.previousSlideLink = slidemenu.Append(-1, "P&revious\tLeft", "Previous Image")
         self.fullscreenLink = slidemenu.Append(-1, "F&ull Screen\tF11", "Toggle Full Screen")
         menuBar.Append(slidemenu, "&Slideshow")
-        
         # Set the menus
         self.SetMenuBar(menuBar)
-
-        self.Bind(wx.EVT_CLOSE, self._OnCloseFrame)
-        
-        self._window = wx.Panel(self, -1)
-
-        self._window.SetBackgroundColour("black")        
-        
-        self._window.SetFocus()
     
     def UpdateStatus(self, text):
         self._statusBar.SetStatusText(text)
@@ -99,33 +93,29 @@ class SlideshowView(wx.Frame):
         
     def ShowImage(self, imagePath):
         util.debugLog("slideshowview.ShowImage()")
-
         # added to fix problem with statusbar/title update not appearing
         wx.YieldIfNeeded()
         util.debugLog("ShowImage() YIELDING",2)
-        
         # resize the image
-        fitted = imaging.FitImage(imagePath)
-        newImagePath = os.path.join("cache", "fit_" + os.path.basename(imagePath))
-        imagePath = fitted.DownsizeFit(self._window.GetSize(), newImagePath)
-        
+        newImagePath = self._PrepareImageFile(imagePath)
         image = wx.Image(newImagePath, wx.BITMAP_TYPE_JPEG)
-        
         x,y = imaging.GetCenterFromTopLeft(self._window.GetSize(), image.GetSize())
-                
         bmp = wx.BitmapFromImage(image)
         self.DestroyBmp()
         self._staticBmp = wx.StaticBitmap(self._window, wx.ID_ANY, bmp,
                                           wx.Point(x,y),
                                           wx.Size(image.GetWidth(),
                                                   image.GetHeight()))
-
         try:
             os.unlink(newImagePath)
         except IOError, (errno, strerror):
             print "I/O error(%s): %s" % (errno, strerror)
-        
         util.debugLog("ShowImage() done",2)
+        
+    def _PrepareImageFile(self, imagePath):
+        fitted = imaging.FitImage(imagePath)
+        newImagePath = os.path.join("cache", "fit_" + os.path.basename(imagePath))
+        return fitted.DownsizeFit(self._window.GetSize(), newImagePath)        
         
     def DestroyBmp(self):
         util.debugLog("slideshowview.DestroyBmp()")
