@@ -34,6 +34,7 @@ class SlideshowPresenter(object):
         self.interactor = interactor
         interactor.Install(self, view)
         self._isRunning = False
+        self._shortWaitSecs = .5
         self._isListening = True
         #self._initView()
         view.Start()
@@ -86,7 +87,7 @@ class SlideshowPresenter(object):
             util.debugLog("need to wait more for another slide",1)
             self.view.UpdateStatus("Waiting for next image to download...")
             # Init timer to call again in a bit
-            if not blockTimer: self.StartTimer(.5)
+            if not blockTimer: self.StartTimer(self._shortWaitSecs)
         elif status == False:
             util.debugLog("no more slides")
             self.view.UpdateStatus("Slideshow finished")
