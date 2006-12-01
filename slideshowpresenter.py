@@ -75,15 +75,22 @@ class SlideshowPresenter(object):
         t.start()
         self._isRunning = True
     
+    def SetWaitSecs(self, waitSecs):
+        """
+        Configure the amount of seconds to wait between slides.
+        """
+        self._longWaitSecs = waitSecs
+    
     def ShiftSlide(self, shift=1, blockTimer=False):
+        """
+        Moves or "shifts" a 'shift' number of slides in the queue.
+        If blockTimer is true, then the timer is not set after calling.
+        """
         # check see if we were even started
         if not self._isRunning: return False
-        
         # don't go to the next picture if we've yet to show one
         if self._first is True: shift = 0
-
         status = self.model.AddIndex(shift)
-        
         if status == None:
             util.debugLog("need to wait more for another slide",1)
             self.view.UpdateStatus("Waiting for next image to download...")
@@ -103,9 +110,10 @@ class SlideshowPresenter(object):
             # Init timer to call again in a while
             if not blockTimer: self.StartTimer(self._longWaitSecs)
 
-            
-    
     def CleanupSlideshow(self):
+        """
+        Stops the model, then clears the cache.
+        """
         self.model.Stop()
         self.model.Cleanup()
         
