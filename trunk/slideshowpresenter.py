@@ -35,6 +35,7 @@ class SlideshowPresenter(object):
         interactor.Install(self, view)
         self._isRunning = False
         self._shortWaitSecs = .5
+        self._longWaitSecs = 5
         self._isListening = True
         #self._initView()
         view.Start()
@@ -60,7 +61,7 @@ class SlideshowPresenter(object):
             self.view.Popup(msg)
             return False
         self._ModelStart()
-        self.StartTimer()
+        self.StartTimer(self._shortWaitSecs)
     
     def _ModelSearch(self):
         self.view.UpdateStatus("Searching for photos...")
@@ -100,7 +101,7 @@ class SlideshowPresenter(object):
             if blockTimer: self.view.UpdateStatus("Ready")
             else: self.view.UpdateStatus("Playing slideshow...")
             # Init timer to call again in a while
-            if not blockTimer: self.StartTimer()
+            if not blockTimer: self.StartTimer(self._longWaitSecs)
 
             
     
@@ -108,7 +109,7 @@ class SlideshowPresenter(object):
         self.model.Stop()
         self.model.Cleanup()
         
-    def StartTimer(self, waitSecs=1):
+    def StartTimer(self, waitSecs):
         """
         Initializes a Timer to show the next slide in the queue after a few
         seconds.
