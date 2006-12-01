@@ -33,7 +33,6 @@ class SlideshowView(wx.Frame):
                           size=(800,600), style=(wx.DEFAULT_FRAME_STYLE))#|wx.MAXIMIZE))
         self._statusBar = self.CreateStatusBar()
         self._BuildMenus()
-        self.Bind(wx.EVT_CLOSE, self._OnCloseFrame)
         self._window = wx.Panel(self, -1)
         self._window.SetBackgroundColour("black")        
         self._window.SetFocus()
@@ -62,14 +61,6 @@ class SlideshowView(wx.Frame):
         if text: self.SetTitle("fsshow - " + text)
         else: self.SetTitle(fsshow)
         
-    def _OnCloseFrame(self, evt):
-        """
-        Handles the close frame event.
-        """
-        if hasattr(self, "_window") and hasattr(self._window, "ShutdownDemo"):
-            self._window.ShutdownDemo()
-        evt.Skip()
-    
     def _OnAbout(self, evt):
         d = wx.MessageDialog(self, "fsshow\n"
                              "A full screen slideshow generator for Flickr.\n"
