@@ -58,8 +58,10 @@ class SlideshowView(wx.Frame):
     
     def UpdateStatus(self, text):
         self._statusBar.SetStatusText(text)
-        if text: self.SetTitle("fsshow - " + text)
-        else: self.SetTitle(fsshow)
+        
+    def UpdateTitle(self, text):
+        if text: self.SetTitle(text + " - fsshow")
+        else: self.SetTitle("fsshow")
         
     def _OnAbout(self, evt):
         d = wx.MessageDialog(self, "fsshow\n"
