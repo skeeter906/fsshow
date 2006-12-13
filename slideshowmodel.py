@@ -83,6 +83,14 @@ class SlideshowModel(object):
         """
         return self._imagePaths[self._currentIndex]
 
+    def CurrentTitle(self):
+        """
+        Returns the title of the current slide in the show.
+        """
+        if hasattr(self, "_currentIndex"):
+            return self._slides[self._currentIndex].GetTitle()
+        return None
+    
     def AddIndex(self, n):
         """
         Adds n to the current slide index. May be positive or
