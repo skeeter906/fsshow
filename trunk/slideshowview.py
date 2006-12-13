@@ -29,10 +29,11 @@ class SlideshowView(wx.Frame):
     """
     def __init__(self):
         self.app = wx.App(0)
-        wx.Frame.__init__(self, None, -1, "fsshow", 
-                          size=(800,600), style=(wx.DEFAULT_FRAME_STYLE))
+        wx.Frame.__init__(self, None, -1, size=(800,600),
+                          style=(wx.DEFAULT_FRAME_STYLE))
         self._statusBar = self.CreateStatusBar()
         self._BuildMenus()
+        self.UpdateTitle("")
         self._window = wx.Panel(self, -1)
         self._window.SetBackgroundColour("black")        
         self._window.SetFocus()
