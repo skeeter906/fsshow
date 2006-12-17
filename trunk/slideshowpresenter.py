@@ -100,7 +100,7 @@ class SlideshowPresenter(object):
             util.debugLog("no more slides")
             self.view.UpdateStatus("Slideshow finished")
         else:
-            self.view.UpdateTitle(self.model.CurrentTitle())
+            self.view.UpdateTitle(self.model.CurrentTitle() + ', uploaded by ' + self.model.CurrentAuthor())
             self.view.UpdateStatus("Drawing Image...")
             util.debugLog("showing current slide",2)
             path = self.model.CurrentImagePath()
