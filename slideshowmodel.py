@@ -236,9 +236,12 @@ class FlickrSlideFactory(SlideFactory):
         super(FlickrSlideFactory, self).__init__()
     
     def BuildProcess(self):
-        if "email" in self._searchParams: self._ProcessEmail()
-        elif "url" in self._searchParams: self._ProcessUrl()
-        elif "username" in self._searchParams: self._ProcessUsername()
+        try:
+            if "email" in self._searchParams: self._ProcessEmail()
+            elif "url" in self._searchParams: self._ProcessUrl()
+            elif "username" in self._searchParams: self._ProcessUsername()
+        except flickr.FlickrError:
+            raise SlideshowModelNoSlides("User not found")
         
     def _ProcessUrl(self):
         util.debugLog("processing url " + self._searchParams["url"])
@@ -247,7 +250,7 @@ class FlickrSlideFactory(SlideFactory):
         
     def _ProcessEmail(self):
         util.debugLog("processing email " + self._searchParams["email"])
-        user = flickr.people_findByEmail(self._searchParams["email"])
+        user = flickr.people_findByEmail(self._searchParams["email"])    
         self._ProcessUserPages(user)
         
     def _ProcessUsername(self):
