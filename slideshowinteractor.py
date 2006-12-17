@@ -108,7 +108,7 @@ class SlideshowInteractor(object):
         Starts the timer if it's not running, or stops it if it is running.
         """
         if hasattr(self, "_timer") and self._timer.IsRunning(): self.presenter.StopTimer()
-        else: self.presenter.StartTimer()
+        else: self.presenter.StartTimer(0.01)
 
     def _OnKey(self, evt):
         if evt.GetKeyCode() == wx.WXK_RIGHT:
