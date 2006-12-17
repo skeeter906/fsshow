@@ -62,17 +62,12 @@ class SlideshowModel(object):
         Retrieves an image from Flickr and stores it in the model.
         """
         slide.GetImage(outPath)
-        path = slide.GetLocalPath()
         self._lock.acquire()
         util.debugLog(outPath + " acquired lock",2)
         # make sure the model wasn't Stop()'d
         if not self._continue:
-            util.debugLog(outPath + " releasing lock",2)
-            self._lock.release()
-            os.unlink(path)
-            self._workerCounter.Down()
-            return
-        self._imagePaths.append(path)
+            return self._ShutdownWorker(slide, outPath)
+        self._imagePaths.append(slide.GetLocalPath())
         util.debugLog(outPath + " releasing lock",2)
         self._lock.release()
         self._workerCounter.Down()    
@@ -165,6 +160,12 @@ class SlideshowModel(object):
         self._isRunning = False
         util.debugLog("All threads have completed")
         return True
+
+    def _ShutdownWorker(self, slide, outPath):
+        util.debugLog(outPath + " releasing lock",2)
+        self._lock.release()
+        os.unlink(slide.GetLocalPath())
+        self._workerCounter.Down()        
 
     def _PreStart(self):
         """
@@ -330,9 +331,10 @@ class SlideshowModelNoSlides(SlideshowModelException): pass
 if __name__ == "__main__":
     util.DEBUG_LEVEL = 10
     count = 0
+    loopCount = 0
     model = SlideshowModel()
-    #model.SearchParam("email", "m2@innerlogic.org")
-    model.SearchParam("username", "test")
+    model.SearchParam("email", "m2@innerlogic.org")
+    #model.SearchParam("username", "test")
     model.Find()
     t = threading.Thread(target=model.Start)
     t.start()
