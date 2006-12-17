@@ -86,6 +86,14 @@ class SlideshowModel(object):
             return self._readySlides[self._currentIndex].GetTitle()
         return None
     
+    def CurrentAuthor(self):
+        """
+        Returns the title of the current slide in the show.
+        """
+        if hasattr(self, "_currentIndex"):
+            return self._readySlides[self._currentIndex].GetAuthor()
+        return None
+    
     def AddIndex(self, n):
         """
         Adds n to the current slide index. May be positive or
@@ -282,6 +290,13 @@ class FlickrSlide(Slide):
         u = unicode(self._photo.title)
         return u.encode("utf8", "replace")
     
+    def GetAuthor(self):
+        """
+        Returns the author of the slide.
+        """
+        u = unicode(self._photo.owner.username)
+        return u.encode("utf8", "replace")
+    
     def GetUrl(self):
         """
         Returns the URL (string) of the image.
@@ -346,7 +361,7 @@ if __name__ == "__main__":
             continue
         elif status is False:
             break
-        print count, ":", model.CurrentTitle(), ":", model.CurrentImagePath()
+        print count, ":", model.CurrentTitle(), ":", model.CurrentAuthor(), ":", model.CurrentImagePath()
         count += 1
     print "slideshow finished"
     model.Stop()
