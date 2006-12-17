@@ -55,9 +55,10 @@ class SlideshowPresenter(object):
         self._first = True
         try: 
             self._ModelSearch()
-        except slideshowmodel.SlideshowModelNoSlides, inst:
+        except (slideshowmodel.SlideshowModelNoSlides, IOError), inst:
             msg = str(inst)
             util.debugLog(msg)
+            self.view.UpdateStatus("Error")
             self.view.Popup(msg)
             return False
         self._ModelStart()
