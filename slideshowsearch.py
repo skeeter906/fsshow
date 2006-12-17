@@ -48,11 +48,11 @@ class SlideshowSearchDialog(wx.Dialog):
         box = wx.BoxSizer(wx.HORIZONTAL)
 
         label = wx.StaticText(self, -1, "Flickr email, username\nor photo stream link:")
-        label.SetHelpText("This is the help text for the label")
+        #label.SetHelpText("This is the help text for the label")
         box.Add(label, 0, wx.ALIGN_CENTRE|wx.ALL, 5)
 
         self._searchString = wx.TextCtrl(self, -1, "m2@innerlogic.org", size=(300,-1))
-        self._searchString.SetHelpText("Here's some help text for field #1")
+        self._searchString.SetHelpText("Enter your search parameter here")
         box.Add(self._searchString, 1, wx.ALIGN_CENTRE|wx.ALL, 5)
 
         sizer.Add(box, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
@@ -79,12 +79,13 @@ class SlideshowSearchDialog(wx.Dialog):
             btnsizer.AddButton(btn)
         
         btn = wx.Button(self, wx.ID_OK)
-        btn.SetHelpText("The OK button completes the dialog")
+        btn.SetHelpText("Start the slideshow")
+        btn.SetLabel("Start")
         btn.SetDefault()
         btnsizer.AddButton(btn)
 
         btn = wx.Button(self, wx.ID_CANCEL)
-        btn.SetHelpText("The Cancel button cnacels the dialog. (Cool, huh?)")
+        btn.SetHelpText("Cancel the slideshow")
         btnsizer.AddButton(btn)
         btnsizer.Realize()
 
@@ -98,7 +99,7 @@ class SlideshowSearchDialog(wx.Dialog):
 if __name__ == "__main__":
     import slideshowview, util
     view = slideshowview.SlideshowView()
-    dlg = SlideshowSearchDialog(view, -1, "This is a Dialog", size=(470, 200),
+    dlg = SlideshowSearchDialog(view, -1, "New Slideshow", size=(470, 200),
         #style = wx.CAPTION | wx.SYSTEM_MENU | wx.THICK_FRAME)
         style = wx.DEFAULT_DIALOG_STYLE)
     dlg.CenterOnScreen()
