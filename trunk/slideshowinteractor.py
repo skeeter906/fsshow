@@ -47,7 +47,7 @@ class SlideshowInteractor(object):
         util.debugLog("SlideshowInteractor._OnStartSlideshow()")
         self.StopTimer()
         dlg = slideshowsearch.SlideshowSearchDialog(self.view, -1,
-                                                    "This is a Dialog",
+                                                    "New Slideshow",
                                                     size=(350, 200),
                                                     style=wx.DEFAULT_DIALOG_STYLE)
         dlg.CenterOnScreen()

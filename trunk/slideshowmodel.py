@@ -349,7 +349,6 @@ class SlideshowModelNoSlides(SlideshowModelException): pass
 if __name__ == "__main__":
     util.DEBUG_LEVEL = 10
     count = 0
-    loopCount = 0
     model = SlideshowModel()
     model.SearchParam("email", "m2@innerlogic.org")
     #model.SearchParam("username", "test")

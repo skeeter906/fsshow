@@ -37,6 +37,7 @@ class SlideshowView(wx.Frame):
         self._window = wx.Panel(self, -1)
         self._window.SetBackgroundColour("black")        
         self._window.SetFocus()
+        wx.HelpProvider_Set(wx.SimpleHelpProvider())
     
     def _BuildMenus(self):
         menuBar = wx.MenuBar()
