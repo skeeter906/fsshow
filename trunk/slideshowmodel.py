@@ -83,7 +83,7 @@ class SlideshowModel(object):
         Returns the title of the current slide in the show.
         """
         if hasattr(self, "_currentIndex"):
-            return self._slides[self._currentIndex].GetTitle()
+            return self._readySlides[self._currentIndex].GetTitle()
         return None
     
     def AddIndex(self, n):
@@ -346,8 +346,7 @@ if __name__ == "__main__":
             continue
         elif status is False:
             break
-        path = model.CurrentImagePath()
-        print str(count), ": ", model.CurrentTitle(), ": ", path
+        print count, ":", model.CurrentTitle(), ":", model.CurrentImagePath()
         count += 1
     print "slideshow finished"
     model.Stop()
