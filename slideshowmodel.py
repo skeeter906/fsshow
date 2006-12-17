@@ -328,8 +328,8 @@ class FlickrSlide(Slide):
         if not hasattr(self, "_url"): self.GetUrl()
         util.debugLog(self._localPath + " downloading image",2)
         data = urllib.urlopen(self._url).read()
+        fd = open(outPath, "wb")
         try:
-            fd = open(outPath, "wb")
             fd.write(data)
         finally:
             fd.close()
