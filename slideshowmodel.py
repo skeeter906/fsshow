@@ -67,7 +67,7 @@ class SlideshowModel(object):
         # make sure the model wasn't Stop()'d
         if not self._continue:
             return self._ShutdownWorker(slide, outPath)
-        self._imagePaths.append(slide.GetLocalPath())
+        self._readySlides.append(slide)
         util.debugLog(outPath + " releasing lock",2)
         self._lock.release()
         self._workerCounter.Down()    
@@ -76,7 +76,7 @@ class SlideshowModel(object):
         """
         Returns the path of the current slide in the show.
         """
-        return self._imagePaths[self._currentIndex]
+        return self._readySlides[self._currentIndex].GetLocalPath()
 
     def CurrentTitle(self):
         """
@@ -100,7 +100,7 @@ class SlideshowModel(object):
             # out of slides
             util.debugLog("out of slides")
             status = False  
-        elif self._currentIndex+n >= len(self._imagePaths):
+        elif self._currentIndex+n >= len(self._readySlides):
             # wait for more to download
             util.debugLog("wait for more slides to download",2)
             status = None
@@ -181,7 +181,7 @@ class SlideshowModel(object):
             time.sleep(self._shortWaitSecs)
         self._continue = True
         self._currentIndex = 0
-        self._imagePaths = []
+        self._readySlides = []
         # Thread-sensitive members
         self._lock = threading.Lock()
         self._workerCounter = util.ThreadCounter()
@@ -191,11 +191,11 @@ class SlideshowModel(object):
     
     def Cleanup(self):
         # cleanup tmp files
-        if hasattr(self, "_imagePaths"):
-            for path in self._imagePaths:
-                util.debugLog("Cleanup: deleting " + path, 2)
+        if hasattr(self, "_readySlides"):
+            for slide in self._readySlides:
+                util.debugLog("Cleanup: deleting " + slide.GetLocalPath(), 2)
                 try:
-                    os.unlink(path)
+                    os.unlink(slide.GetLocalPath())
                 except IOError: pass
     
     def IsRunning(self):
@@ -347,7 +347,7 @@ if __name__ == "__main__":
         elif status is False:
             break
         path = model.CurrentImagePath()
-        print str(count), ": ", path
+        print str(count), ": ", model.CurrentTitle(), ": ", path
         count += 1
     print "slideshow finished"
     model.Stop()
