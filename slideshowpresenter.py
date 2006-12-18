@@ -53,6 +53,7 @@ class SlideshowPresenter(object):
         util.debugLog("SlideshowPresenter.StartSlideshow()")
         
         self._first = True
+        self._longWaitSecs = self.interactor.displayTime
         try: 
             self._ModelSearch()
         except (slideshowmodel.SlideshowModelNoSlides, IOError), inst:

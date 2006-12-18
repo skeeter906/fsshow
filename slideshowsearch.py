@@ -63,10 +63,12 @@ class SlideshowSearchDialog(wx.Dialog):
         label.SetHelpText("This is the help text for the label")
         box.Add(label, 0, wx.ALIGN_CENTRE|wx.ALL, 5)
 
-        self.text2 = wx.TextCtrl(self, -1, "5")
-        self.text2.SetHelpText("Minimum length of time for a slide to show. "
+        self._slider = wx.Slider(self, -1, 5, 1, 100, (30, 60), (250, -1),
+                                 wx.SL_HORIZONTAL | wx.SL_AUTOTICKS | wx.SL_LABELS)
+        self._slider.SetTickFreq(6, 1)
+        self._slider.SetHelpText("Minimum length of time for a slide to show. "
                                + "Large pictures may take longer due to bandwidth constraints.")
-        box.Add(self.text2, 1, wx.ALIGN_CENTRE|wx.ALL, 5)
+        box.Add(self._slider, 1, wx.ALIGN_CENTRE|wx.ALL, 5)
 
         sizer.Add(box, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
@@ -96,6 +98,9 @@ class SlideshowSearchDialog(wx.Dialog):
         sizer.Fit(self)
     def GetSearchString(self):
         return self._searchString.GetValue()
+    
+    def GetDisplayTime(self):
+        return self._slider.GetValue()
 
 if __name__ == "__main__":
     import slideshowview, util
@@ -107,7 +112,7 @@ if __name__ == "__main__":
 
     # this does not return until the dialog is closed.
     val = dlg.ShowModal()
-    print dlg.GetSearchString()
+    print dlg.GetSearchString(), dlg.GetDisplayTime()
     if val == wx.ID_OK:
         util.debugLog("You pressed OK\n")
     else:
